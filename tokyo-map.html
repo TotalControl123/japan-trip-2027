@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tokyo Stops Map</title>
+<meta name="description" content="Satellite map of every Tokyo stop on our March 2027 trip, by day, with the best areas to stay.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}}
+:root[data-theme="dark"]{--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:360px 1fr;height:100vh;height:100dvh}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--card);padding:16px}
+#map{height:100%;background:#0b1a2a}
+a{color:var(--accent)}
+.back{font-size:13px;text-decoration:none}
+h1{font-size:21px;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.zone{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;background:var(--bg)}
+.zone:hover{border-color:var(--accent)}
+.zone h3{margin:0 0 2px;font-size:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.zone h3 span{flex:none;line-height:1.5;margin-top:1px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.best{background:#DDF3E6;color:#166B3C}.ok{background:#FFF1D6;color:#8A5A00}.meh{background:#ECEDEF;color:#4A4F57}
+.zone p{margin:4px 0;font-size:13.5px}
+.zone ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:14px}
+.pin{width:26px;height:26px;border-radius:50%;border:2px solid #fff;color:#fff;font:700 12px/22px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.zlabel{background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:6px;font-weight:700;padding:3px 8px;box-shadow:none}
+.zlabel:before{display:none}
+.leaflet-popup-content{font-size:13.5px;margin:10px 12px}
+.leaflet-popup-content b{font-size:14.5px}
+.pd{color:#666;font-size:12px}
+.offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+ #map{height:62vh;order:-1}
+ .panel{border-right:0;border-top:1px solid var(--line);padding:14px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="panel">
+  <a class="back" href="./">← Back to the itinerary</a>
+  <h1>Tokyo: where everything is</h1>
+  <p class="sub">Every Tokyo stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+
+  <h2>Show days</h2>
+  <div class="chips" id="dayChips"></div>
+
+  <h2>Where to stay</h2>
+  <div id="zones"></div>
+
+  <h2>Not on this map</h2>
+  <ul class="offmap">
+   <li>Narita airport (Day 2): Narita Express to Shinjuku, ~80 min, no changes.</li>
+   <li>Kawaguchiko & Fuji (Day 7): the bus leaves from Busta Shinjuku, pinned.</li>
+   <li>DisneySea (Day 4) is pinned on the bay, bottom right.</li>
+  </ul>
+
+  <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. Travel times are typical door-to-door by train in the morning.</p>
+ </aside>
+ <div id="map" role="application" aria-label="Satellite map of Tokyo stops"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const DAYS = {
+ 2:{label:"Day 2 · Mon 8",title:"Shinjuku by night",c:"#E5484D"},
+ 3:{label:"Day 3 · Tue 9",title:"Harajuku & Shibuya",c:"#F76B15"},
+ 4:{label:"Day 4 · Wed 10",title:"DisneySea",c:"#D6409F"},
+ 5:{label:"Day 5 · Thu 11",title:"Asakusa, Ueno, Yanaka, teamLab",c:"#FFC53D"},
+ 6:{label:"Day 6 · Fri 12",title:"Pokémon, Akihabara, Nakano",c:"#30A46C"},
+ 7:{label:"Day 7 · Sat 13",title:"Fuji day trip",c:"#00A2C7"},
+ 8:{label:"Day 8 · Sun 14",title:"Tsukiji, then Hakone",c:"#8E4EC6"}
+};
+// [day, time, name, lat, lng, search]
+const STOPS = [
+ [2,"17:30","Tokyo Metropolitan Govt Building (free observatory)",35.6896,139.6921],
+ [2,"18:45","Omoide Yokocho",35.6929,139.6995],
+ [2,"20:00","Kabukicho & the Godzilla head",35.6951,139.7019,"Godzilla Head Shinjuku"],
+ [2,"21:00","Golden Gai",35.6940,139.7047],
+ [3,"09:00","Shinjuku Gyoen",35.6852,139.7100],
+ [3,"10:30","Meiji Jingu",35.6764,139.6993],
+ [3,"11:30","Takeshita-dori",35.6715,139.7036,"Takeshita Street"],
+ [3,"12:00","Kiddy Land & Omotesando",35.6687,139.7067,"Kiddy Land Harajuku"],
+ [3,"14:00","Miyashita Park & Cat Street",35.6617,139.7021],
+ [3,"14:45","Shibuya PARCO 6F (Nintendo TOKYO, Pokémon Center)",35.6619,139.6985,"Shibuya PARCO"],
+ [3,"16:15","Scramble Crossing & Hachiko",35.6595,139.7005,"Shibuya Scramble Crossing"],
+ [3,"17:00","SHIBUYA SKY",35.6584,139.7022,"Shibuya Sky"],
+ [3,"18:30","Uobei conveyor sushi",35.6587,139.6980,"Uobei Shibuya Dogenzaka"],
+ [3,"19:45","Nonbei Yokocho",35.6597,139.7033],
+ [4,"All day","Tokyo DisneySea",35.6267,139.8851],
+ [5,"07:00","Senso-ji",35.7148,139.7967],
+ [5,"08:00","Nakamise-dori",35.7119,139.7963,"Nakamise Shopping Street"],
+ [5,"09:30","Kappabashi Kitchen Street",35.7136,139.7880],
+ [5,"10:45","Tokyo National Museum",35.7189,139.7765],
+ [5,"12:30","Lunch: Ponta Honke",35.7085,139.7737,"Ponta Honke Ueno"],
+ [5,"13:30","Yushima Tenjin",35.7079,139.7680],
+ [5,"14:15","Nezu Shrine",35.7203,139.7607],
+ [5,"15:00","Yanaka Ginza",35.7277,139.7661],
+ [5,"17:00","Ameyoko",35.7100,139.7745],
+ [5,"18:45","teamLab Planets",35.6491,139.7898,"teamLab Planets Tokyo"],
+ [6,"10:00","Pokémon Center MEGA TOKYO (Sunshine City)",35.7290,139.7191,"Pokemon Center Mega Tokyo"],
+ [6,"11:00","Animate Ikebukuro",35.7316,139.7166],
+ [6,"12:45","Super Potato",35.7009,139.7699,"Super Potato Akihabara"],
+ [6,"13:45","Mandarake Complex",35.7012,139.7713,"Mandarake Complex Akihabara"],
+ [6,"14:30","Radio Kaikan & Surugaya",35.6982,139.7716,"Akihabara Radio Kaikan"],
+ [6,"15:30","Card shops (Hareruya 2, Card Rush)",35.7016,139.7705,"Card Rush Akihabara"],
+ [6,"16:15","Hey! retro arcade",35.6997,139.7718,"Hirose Entertainment Yard Akihabara"],
+ [6,"17:15","Nakano Broadway",35.7088,139.6656],
+ [7,"07:00","Busta Shinjuku (bus to Kawaguchiko)",35.6886,139.7005,"Busta Shinjuku"],
+ [7,"19:00","Fuunji tsukemen",35.6869,139.6960,"Fuunji Shinjuku"],
+ [8,"07:00","Tsukiji Outer Market",35.6654,139.7707],
+ [8,"10:00","Odakyu Romancecar, Shinjuku",35.6905,139.6995,"Odakyu Shinjuku Station"]
+];
+const ZONES = [
+ {id:"shinjuku",name:"Shinjuku (south & west of the station)",tag:["best","Best fit"],lat:35.6890,lng:139.6990,r:750,
+  why:"Fewer stops on foot than Ueno, but the fastest trains to everything else. Day 2 and the Fuji bus are on the doorstep, and Shibuya, Harajuku and Nakano are all 5–10 minutes.",
+  pts:["Day 2, 7 and 8 start here; Romancecar to Hakone leaves from here","Shibuya 7 min (JR Yamanote), Nakano 5 min, Akihabara ~15 min (JR Chuo rapid)","Asakusa / Ueno ~30 min; DisneySea ~50 min","Narita Express runs direct","Airbnb: residential flats can't host Mon–Fri here, so only hotel-licensed apartments"]},
+ {id:"ueno",name:"Ueno / Okachimachi",tag:["ok","Good alternative"],lat:35.7095,lng:139.7745,r:700,
+  why:"Cheaper, and the whole of Day 5 is walkable. Akihabara is one stop. The west side becomes the commute instead.",
+  pts:["Day 5 on foot; Akihabara 3 min","Keisei Skyliner from Narita lands here in ~45 min (faster than to Shinjuku)","Shinjuku and Shibuya ~25–30 min each way","Busta / Romancecar mornings mean a 07:00 start becomes 06:30","DisneySea ~40 min"]},
+ {id:"shibuya",name:"Shibuya",tag:["meh","Fine, pricier"],lat:35.6585,lng:139.7010,r:600,
+  why:"Great for Day 3 and nights out, but pricier and further from everything on the east side.",
+  pts:["Day 3 on foot; Shinjuku 7 min","Asakusa / Ueno ~35 min","Hotels cost more for the same room"]}
+];
+
+const isDark = matchMedia("(prefers-color-scheme: dark)").matches;
+const map = L.map("map",{zoomControl:true}).setView([35.69,139.74],12);
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Labels © Esri"});
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+sat.addTo(map); labels.addTo(map);
+L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{collapsed:true}).addTo(map);
+
+const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Tokyo");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const zoneLayers = {};
+ZONES.forEach(z=>{
+  const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
+  zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+});
+
+const dayLayers = {};
+Object.keys(DAYS).forEach(d=>dayLayers[d]=L.layerGroup().addTo(map));
+STOPS.forEach(([d,t,name,lat,lng,q])=>{
+  const c = DAYS[d].c;
+  const icon = L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${d}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+  L.marker([lat,lng],{icon,title:name}).bindPopup(`<b>${esc(name)}</b><br><span class="pd">${esc(DAYS[d].label)} · ${esc(t)}</span><br><a href="${gm(q||name)}" target="_blank" rel="noopener">Open in Google Maps</a>`).addTo(dayLayers[d]);
+});
+// thin line per day in visiting order
+Object.keys(DAYS).forEach(d=>{
+  const pts = STOPS.filter(s=>s[0]==d && d!=4).map(s=>[s[3],s[4]]);
+  if(pts.length>1) L.polyline(pts,{color:DAYS[d].c,weight:2.5,opacity:.8}).addTo(dayLayers[d]);
+});
+
+// day chips
+const chips = document.getElementById("dayChips");
+Object.entries(DAYS).forEach(([d,info])=>{
+  const b = document.createElement("button");
+  b.className="chip"; b.setAttribute("aria-pressed","true"); b.title=info.title;
+  b.innerHTML=`<i style="background:${info.c}"></i>${esc(info.label.split(" · ")[0])} <span style="color:var(--muted)">${esc(info.title)}</span>`;
+  b.onclick=()=>{const on=b.getAttribute("aria-pressed")==="true";b.setAttribute("aria-pressed",on?"false":"true");on?map.removeLayer(dayLayers[d]):dayLayers[d].addTo(map);};
+  chips.appendChild(b);
+});
+
+// zones list with "stops within 2 km"
+const dist=(a,b,c,e)=>{const R=6371,toR=x=>x*Math.PI/180,dl=toR(c-a),dg=toR(e-b);const h=Math.sin(dl/2)**2+Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const zl=document.getElementById("zones");
+ZONES.forEach(z=>{
+  const near = STOPS.filter(s=>dist(z.lat,z.lng,s[3],s[4])<=2).length;
+  const el=document.createElement("div"); el.className="zone"; el.tabIndex=0;
+  el.innerHTML=`<h3>${esc(z.name)}<span class="${z.tag[0]}">${esc(z.tag[1])}</span></h3><p>${esc(z.why)}</p><p><b>${near}</b> of ${STOPS.length} stops within walking distance (2 km).</p><ul>${z.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`;
+  const go=()=>{map.flyTo([z.lat,z.lng],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});};
+  el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter")go();};
+  zl.appendChild(el);
+});
+
+map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+</script>
+</body>
+</html>
