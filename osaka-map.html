@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Osaka Stops Map</title>
+<meta name="description" content="Satellite map of every Osaka stop on our March 2027 trip, by day, with the best areas to stay.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}}
+:root[data-theme="dark"]{--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:360px 1fr;height:100vh;height:100dvh}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--card);padding:16px}
+#map{height:100%;background:#0b1a2a}
+a{color:var(--accent)}
+.back{font-size:13px;text-decoration:none}
+h1{font-size:21px;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.zone{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;background:var(--bg)}
+.zone:hover{border-color:var(--accent)}
+.zone h3{margin:0 0 2px;font-size:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.zone h3 span{flex:none;line-height:1.5;margin-top:1px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.best{background:#DDF3E6;color:#166B3C}.ok{background:#FFF1D6;color:#8A5A00}.meh{background:#ECEDEF;color:#4A4F57}
+.zone p{margin:4px 0;font-size:13.5px}
+.zone ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:14px}
+.pin{width:26px;height:26px;border-radius:50%;border:2px solid #fff;color:#fff;font:700 12px/22px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.zlabel{background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:6px;font-weight:700;padding:3px 8px;box-shadow:none}
+.zlabel:before{display:none}
+.leaflet-popup-content{font-size:13.5px;margin:10px 12px}
+.leaflet-popup-content b{font-size:14.5px}
+.pd{color:#666;font-size:12px}
+.offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+ #map{height:62vh;order:-1}
+ .panel{border-right:0;border-top:1px solid var(--line);padding:14px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="panel">
+  <a class="back" href="./">← Back to the itinerary</a>
+  <h1>Osaka: where everything is</h1>
+  <p class="sub">Every Osaka stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+
+  <h2>Show days</h2>
+  <div class="chips" id="dayChips"></div>
+
+  <h2>Where to stay</h2>
+  <div id="zones"></div>
+
+  <h2>Not on this map</h2>
+  <ul class="offmap"><li>Nara (Day 14 morning): Kintetsu arrives at Namba, pinned.</li><li>Himeji Castle and Kobe (Day 16): JR from Osaka Station, ~1h.</li><li>Kansai airport (Day 18): Rapi:t from Nankai Namba, pinned.</li></ul>
+
+  <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. Travel times are typical door-to-door by train in the morning.</p>
+ </aside>
+ <div id="map" role="application" aria-label="Satellite map of Osaka stops"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const DAYS = {
+ 14:{label:"Day 14 · Sat 20",title:"Arrive, Shinsaibashi & Dotonbori",c:"#E5484D"},
+ 15:{label:"Day 15 · Sun 21",title:"Castle, Shinsekai, sumo, Umeda",c:"#F76B15"},
+ 16:{label:"Day 16 · Mon 22",title:"Den Den Town (after Himeji & Kobe)",c:"#30A46C"},
+ 17:{label:"Day 17 · Tue 23",title:"Universal Studios Japan",c:"#D6409F"},
+ 18:{label:"Day 18 · Wed 24",title:"Last morning, then KIX",c:"#00A2C7"}
+};
+const STOPS = [
+ [14,"15:00","Kintetsu Namba (arrive from Nara)",34.6670,135.4999,"Osaka Namba Station"],
+ [14,"16:00","Shinsaibashi-suji & Amerikamura",34.6728,135.5013,"Shinsaibashi-suji"],
+ [14,"18:00","Dotonbori & the Glico sign",34.6687,135.5013,"Dotonbori"],
+ [14,"20:30","Hozenji Yokocho",34.6680,135.5034],
+ [15,"09:00","Osaka Castle",34.6873,135.5262],
+ [15,"11:30","Kuromon Market",34.6654,135.5066],
+ [15,"12:45","Shinsekai & Tsutenkaku",34.6525,135.5063,"Tsutenkaku"],
+ [15,"14:00","Grand Sumo, EDION Arena",34.6612,135.5007,"EDION Arena Osaka"],
+ [15,"19:00","Umeda Sky Building",34.7053,135.4906],
+ [15,"20:00","Takimi Koji (dinner)",34.7050,135.4900,"Takimi Koji"],
+ [16,"16:30","Den Den Town",34.6600,135.5060,"Den Den Town Osaka"],
+ [16,"19:30","Karaoke, Namba",34.6650,135.5020,"Big Echo Namba"],
+ [17,"07:30","Universal Studios Japan",34.6654,135.4323],
+ [18,"08:30","Breakfast at Kuromon",34.6650,135.5072,"Kuromon Market"],
+ [18,"09:30","Don Quijote Dotonbori",34.6689,135.5030],
+ [18,"12:45","Nankai Namba (Rapi:t to Kansai airport)",34.6626,135.5014,"Nankai Namba Station"]
+];
+const ZONES = [
+ {id:"namba",name:"Namba",tag:["best","Best fit"],lat:34.6650,lng:135.5025,r:700,
+  why:"Most of Osaka's stops are on foot, the Rapi:t to the airport leaves from here, and Nara trains arrive here.",
+  pts:["Dotonbori, Kuromon, Den Den Town and the sumo all walkable","Rapi:t to Kansai airport 38 min for the flight home","USJ ~25 min, Umeda ~10 min, Osaka Castle ~15 min","Airbnb: existing licensed flats are legal here; check the licence number"]},
+ {id:"umeda",name:"Umeda / Osaka Station",tag:["ok","Good alternative"],lat:34.7025,lng:135.4960,r:650,
+  why:"The JR hub. Fastest for Himeji and Kobe and close to USJ, but every evening in Namba means a 10-minute subway back.",
+  pts:["Day 16 Himeji/Kobe trains leave from here","USJ ~15 min on JR","Nintendo OSAKA and Pokémon Center in Daimaru Umeda","Airport is a longer trip (Haruka from Shin-Osaka or bus)"]},
+ {id:"usj",name:"Universal City (by USJ)",tag:["meh","USJ only"],lat:34.6668,lng:135.4355,r:450,
+  why:"Walk to the USJ gates, but you'd be out on a limb for the other three days.",
+  pts:["Day 17 rope drop on foot","Namba ~25 min","Hotels are priced for theme-park guests"]}
+];
+const isDark = matchMedia("(prefers-color-scheme: dark)").matches;
+const map = L.map("map",{zoomControl:true}).setView([35.69,139.74],12);
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Labels © Esri"});
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+sat.addTo(map); labels.addTo(map);
+L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{collapsed:true}).addTo(map);
+
+const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Osaka");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const zoneLayers = {};
+ZONES.forEach(z=>{
+  const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
+  zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+});
+
+const dayLayers = {};
+Object.keys(DAYS).forEach(d=>dayLayers[d]=L.layerGroup().addTo(map));
+STOPS.forEach(([d,t,name,lat,lng,q])=>{
+  const c = DAYS[d].c;
+  const icon = L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${d}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+  L.marker([lat,lng],{icon,title:name}).bindPopup(`<b>${esc(name)}</b><br><span class="pd">${esc(DAYS[d].label)} · ${esc(t)}</span><br><a href="${gm(q||name)}" target="_blank" rel="noopener">Open in Google Maps</a>`).addTo(dayLayers[d]);
+});
+// thin line per day in visiting order
+Object.keys(DAYS).forEach(d=>{
+  const pts = STOPS.filter(s=>s[0]==d && d!=4).map(s=>[s[3],s[4]]);
+  if(pts.length>1) L.polyline(pts,{color:DAYS[d].c,weight:2.5,opacity:.8}).addTo(dayLayers[d]);
+});
+
+// day chips
+const chips = document.getElementById("dayChips");
+Object.entries(DAYS).forEach(([d,info])=>{
+  const b = document.createElement("button");
+  b.className="chip"; b.setAttribute("aria-pressed","true"); b.title=info.title;
+  b.innerHTML=`<i style="background:${info.c}"></i>${esc(info.label.split(" · ")[0])} <span style="color:var(--muted)">${esc(info.title)}</span>`;
+  b.onclick=()=>{const on=b.getAttribute("aria-pressed")==="true";b.setAttribute("aria-pressed",on?"false":"true");on?map.removeLayer(dayLayers[d]):dayLayers[d].addTo(map);};
+  chips.appendChild(b);
+});
+
+// zones list with "stops within 2 km"
+const dist=(a,b,c,e)=>{const R=6371,toR=x=>x*Math.PI/180,dl=toR(c-a),dg=toR(e-b);const h=Math.sin(dl/2)**2+Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const zl=document.getElementById("zones");
+ZONES.forEach(z=>{
+  const near = STOPS.filter(s=>dist(z.lat,z.lng,s[3],s[4])<=2).length;
+  const el=document.createElement("div"); el.className="zone"; el.tabIndex=0;
+  el.innerHTML=`<h3>${esc(z.name)}<span class="${z.tag[0]}">${esc(z.tag[1])}</span></h3><p>${esc(z.why)}</p><p><b>${near}</b> of ${STOPS.length} stops within walking distance (2 km).</p><ul>${z.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`;
+  const go=()=>{map.flyTo([z.lat,z.lng],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});};
+  el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter")go();};
+  zl.appendChild(el);
+});
+
+map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+</script>
+</body>
+</html>

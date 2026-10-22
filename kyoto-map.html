@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kyoto Stops Map</title>
+<meta name="description" content="Satellite map of every Kyoto stop on our March 2027 trip, by day, with the best areas to stay.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}}
+:root[data-theme="dark"]{--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:360px 1fr;height:100vh;height:100dvh}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--card);padding:16px}
+#map{height:100%;background:#0b1a2a}
+a{color:var(--accent)}
+.back{font-size:13px;text-decoration:none}
+h1{font-size:21px;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.zone{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;background:var(--bg)}
+.zone:hover{border-color:var(--accent)}
+.zone h3{margin:0 0 2px;font-size:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.zone h3 span{flex:none;line-height:1.5;margin-top:1px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.best{background:#DDF3E6;color:#166B3C}.ok{background:#FFF1D6;color:#8A5A00}.meh{background:#ECEDEF;color:#4A4F57}
+.zone p{margin:4px 0;font-size:13.5px}
+.zone ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:14px}
+.pin{width:26px;height:26px;border-radius:50%;border:2px solid #fff;color:#fff;font:700 12px/22px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.zlabel{background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:6px;font-weight:700;padding:3px 8px;box-shadow:none}
+.zlabel:before{display:none}
+.leaflet-popup-content{font-size:13.5px;margin:10px 12px}
+.leaflet-popup-content b{font-size:14.5px}
+.pd{color:#666;font-size:12px}
+.offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+ #map{height:62vh;order:-1}
+ .panel{border-right:0;border-top:1px solid var(--line);padding:14px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="panel">
+  <a class="back" href="./">← Back to the itinerary</a>
+  <h1>Kyoto: where everything is</h1>
+  <p class="sub">Every Kyoto stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+
+  <h2>Show days</h2>
+  <div class="chips" id="dayChips"></div>
+
+  <h2>Where to stay</h2>
+  <div id="zones"></div>
+
+  <h2>Not on this map</h2>
+  <ul class="offmap"><li>Hakone (Day 9 morning): the shinkansen arrives at Kyoto Station, pinned.</li><li>Hiroshima & Miyajima (Day 10): from Kyoto Station, ~1h40.</li><li>Uji and the Nintendo Museum (Day 11) are pinned south of the city; zoom out to see them.</li></ul>
+
+  <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. Travel times are typical door-to-door by train in the morning.</p>
+ </aside>
+ <div id="map" role="application" aria-label="Satellite map of Kyoto stops"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const DAYS = {
+ 9:{label:"Day 9 · Mon 15",title:"Arrive, Nishiki & Gion",c:"#E5484D"},
+ 11:{label:"Day 11 · Wed 17",title:"Nintendo Museum, Uji, Fushimi Inari",c:"#30A46C"},
+ 12:{label:"Day 12 · Thu 18",title:"Higashiyama at dawn",c:"#FFC53D"},
+ 13:{label:"Day 13 · Fri 19",title:"Arashiyama & north-west temples",c:"#00A2C7"},
+ 14:{label:"Day 14 · Sat 20",title:"Train to Nara",c:"#8E4EC6"}
+};
+const STOPS = [
+ [9,"15:45","Kyoto Station (arrive by shinkansen)",34.9858,135.7588,"Kyoto Station"],
+ [9,"16:30","Nishiki Market",35.0050,135.7649],
+ [9,"17:15","Teramachi & Pokémon Center Kyoto (Takashimaya)",35.0036,135.7690,"Pokemon Center Kyoto"],
+ [9,"18:00","Yasaka Shrine & Shirakawa, Gion",35.0063,135.7745,"Shirakawa Gion"],
+ [9,"19:30","Pontocho dinner",35.0055,135.7710,"Pontocho"],
+ [11,"09:45","Nintendo Museum (Ogura, Uji)",34.9066,135.7940,"Nintendo Museum Uji"],
+ [11,"13:15","Lunch: Nakamura Tokichi",34.8905,135.8027,"Nakamura Tokichi Honten"],
+ [11,"14:15","Byodo-in",34.8893,135.8077],
+ [11,"15:45","Gekkeikan Okura Sake Museum",34.9312,135.7616],
+ [11,"16:45","Fushimi Inari Taisha",34.9671,135.7727],
+ [12,"06:00","Kiyomizu-dera",34.9949,135.7850],
+ [12,"07:00","Sannenzaka, Ninenzaka & Yasaka Pagoda",34.9985,135.7792,"Hokan-ji Yasaka Pagoda"],
+ [12,"08:00","% Arabica Higashiyama",34.9983,135.7808,"% Arabica Kyoto Higashiyama"],
+ [12,"08:45","Kodai-ji",35.0006,135.7808],
+ [12,"10:00","Chion-in",35.0055,135.7832],
+ [12,"11:00","Nanzen-ji",35.0110,135.7944],
+ [12,"12:00","Lunch: Okutan yudofu",35.0121,135.7917,"Okutan Nanzenji"],
+ [12,"13:00","Philosopher's Path",35.0200,135.7945,"Philosopher's Path"],
+ [12,"13:45","Ginkaku-ji",35.0270,135.7982],
+ [12,"15:30","Sanjusangen-do",34.9879,135.7718,"Sanjusangendo"],
+ [13,"07:30","Bamboo Grove",35.0170,135.6717,"Arashiyama Bamboo Grove"],
+ [13,"08:30","Tenryu-ji",35.0157,135.6738],
+ [13,"09:30","Okochi Sanso",35.0177,135.6697],
+ [13,"10:30","Iwatayama Monkey Park",35.0094,135.6774],
+ [13,"11:45","Togetsukyo Bridge & lunch",35.0127,135.6778,"Togetsukyo Bridge"],
+ [13,"13:15","Ninna-ji",35.0310,135.7137],
+ [13,"14:15","Ryoan-ji",35.0345,135.7183],
+ [13,"15:15","Kinkaku-ji",35.0394,135.7292],
+ [13,"16:30","Kitano Tenmangu",35.0312,135.7351],
+ [13,"18:30","Kyoto Station Skyway & Ramen Street",34.9852,135.7585,"Kyoto Station Building"],
+ [14,"07:15","Kintetsu Kyoto (train to Nara)",34.9849,135.7581,"Kintetsu Kyoto Station"]
+];
+const ZONES = [
+ {id:"station",name:"Kyoto Station (north side)",tag:["best","Best fit"],lat:34.9880,lng:135.7590,r:700,
+  why:"Fewer temples on foot, but every train you need leaves from here: the shinkansen in and the 07:00 Hiroshima train, Uji and Nara on Kintetsu, Arashiyama and Fushimi Inari on JR.",
+  pts:["Day 10 Hiroshima and Day 14 Nara start here; Day 9 arrives here","Fushimi Inari 5 min, Arashiyama 15 min, Uji/Nintendo Museum ~25 min","Gion and Nishiki 10–15 min by subway or a ~¥1,500 taxi","Biggest choice of twin rooms at fair prices","Airbnb: only hotel- or ryokan-licensed places for our dates"]},
+ {id:"downtown",name:"Downtown (Shijo / Kawaramachi)",tag:["ok","Good alternative"],lat:35.0040,lng:135.7660,r:650,
+  why:"Kyoto's centre for food and evenings. Nishiki, Pontocho and Gion are on foot, but each day trip starts with a ride to the station.",
+  pts:["Day 9 evening and Gion nights on foot","Kyoto Station 2 stops by subway (~10 min)","Day 12's 06:00 Kiyomizu start is a 10-min taxi","Best restaurants and bars late at night"]},
+ {id:"gion",name:"Gion (Higashiyama)",tag:["meh","Splurge"],lat:35.0010,lng:135.7790,r:500,
+  why:"The most atmospheric streets, with machiya townhouses to rent. Pricey, and furthest from the trains.",
+  pts:["Day 12 on foot from the door","Kyoto Station ~20 min by bus or taxi","Quiet after 21:00"]}
+];
+const isDark = matchMedia("(prefers-color-scheme: dark)").matches;
+const map = L.map("map",{zoomControl:true}).setView([35.69,139.74],12);
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Labels © Esri"});
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+sat.addTo(map); labels.addTo(map);
+L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{collapsed:true}).addTo(map);
+
+const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Kyoto");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const zoneLayers = {};
+ZONES.forEach(z=>{
+  const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
+  zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+});
+
+const dayLayers = {};
+Object.keys(DAYS).forEach(d=>dayLayers[d]=L.layerGroup().addTo(map));
+STOPS.forEach(([d,t,name,lat,lng,q])=>{
+  const c = DAYS[d].c;
+  const icon = L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${d}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+  L.marker([lat,lng],{icon,title:name}).bindPopup(`<b>${esc(name)}</b><br><span class="pd">${esc(DAYS[d].label)} · ${esc(t)}</span><br><a href="${gm(q||name)}" target="_blank" rel="noopener">Open in Google Maps</a>`).addTo(dayLayers[d]);
+});
+// thin line per day in visiting order
+Object.keys(DAYS).forEach(d=>{
+  const pts = STOPS.filter(s=>s[0]==d && d!=4).map(s=>[s[3],s[4]]);
+  if(pts.length>1) L.polyline(pts,{color:DAYS[d].c,weight:2.5,opacity:.8}).addTo(dayLayers[d]);
+});
+
+// day chips
+const chips = document.getElementById("dayChips");
+Object.entries(DAYS).forEach(([d,info])=>{
+  const b = document.createElement("button");
+  b.className="chip"; b.setAttribute("aria-pressed","true"); b.title=info.title;
+  b.innerHTML=`<i style="background:${info.c}"></i>${esc(info.label.split(" · ")[0])} <span style="color:var(--muted)">${esc(info.title)}</span>`;
+  b.onclick=()=>{const on=b.getAttribute("aria-pressed")==="true";b.setAttribute("aria-pressed",on?"false":"true");on?map.removeLayer(dayLayers[d]):dayLayers[d].addTo(map);};
+  chips.appendChild(b);
+});
+
+// zones list with "stops within 2 km"
+const dist=(a,b,c,e)=>{const R=6371,toR=x=>x*Math.PI/180,dl=toR(c-a),dg=toR(e-b);const h=Math.sin(dl/2)**2+Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const zl=document.getElementById("zones");
+ZONES.forEach(z=>{
+  const near = STOPS.filter(s=>dist(z.lat,z.lng,s[3],s[4])<=2).length;
+  const el=document.createElement("div"); el.className="zone"; el.tabIndex=0;
+  el.innerHTML=`<h3>${esc(z.name)}<span class="${z.tag[0]}">${esc(z.tag[1])}</span></h3><p>${esc(z.why)}</p><p><b>${near}</b> of ${STOPS.length} stops within walking distance (2 km).</p><ul>${z.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`;
+  const go=()=>{map.flyTo([z.lat,z.lng],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});};
+  el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter")go();};
+  zl.appendChild(el);
+});
+
+map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+</script>
+</body>
+</html>
