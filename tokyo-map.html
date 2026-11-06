@@ -56,7 +56,10 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
   <h2>Show days</h2>
   <div class="chips" id="dayChips"></div>
 
-  <h2>Where to stay</h2>
+  <h2>Where we're staying</h2>
+  <p class="sub" style="margin:0">★ <b>Shinjuku Warm House</b>, Higashi-Shinjuku (booked). Oedo line straight to Tsukiji and to Shinjuku-nishiguchi; Shinjuku station ~15 min on foot.</p>
+
+  <h2>Areas we compared</h2>
   <div id="zones"></div>
 
   <h2>Not on this map</h2>
@@ -188,6 +191,9 @@ ZONES.forEach(z=>{
 });
 
 map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+// our booked base (pinned at the station, not the door)
+L.marker([35.6977,139.7075],{icon:L.divIcon({className:"",html:'<div class="pin" style="background:#111;width:32px;height:32px;line-height:28px;font-size:16px">★</div>',iconSize:[32,32],iconAnchor:[16,16]}),zIndexOffset:1000,title:"Our apartment"})
+ .bindPopup('<b>Our base: Shinjuku Warm House</b><br><span class="pd">Booked, Mon 8 – Sun 14 Mar. Pinned at Higashi-Shinjuku station (Oedo & Fukutoshin lines); the exact address is in the Airbnb app.</span>').addTo(map);
 </script>
 </body>
 </html>

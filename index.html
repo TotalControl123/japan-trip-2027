@@ -304,7 +304,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
 <script>
 /* ======================= DATA ======================= */
 const CITY = {
-  tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · base: Shinjuku",map:"tokyo-map.html"},
+  tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · booked: Shinjuku Warm House, Higashi-Shinjuku",map:"tokyo-map.html"},
   hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · private onsen"},
   kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · incl. Hiroshima day",map:"kyoto-map.html"},
   osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · base: Namba",map:"osaka-map.html"}
@@ -318,8 +318,8 @@ const DAYS = [
  {n:2,date:"2027-03-08",city:"tokyo",title:"Land, then Shinjuku by night",pace:"Arrival evening",steps:"~10,000",note:"Don't nap. Stay up until 22:00 Japan time and jetlag goes in two days.",stops:[
   ["05:55","Shanghai transfer","3h 45m: transfer security, breakfast, then CA929 at 09:40."],
   ["13:40","Land at Narita T1","Immigration with Visit Japan Web QR codes. Cash from the 7-Eleven ATM in arrivals."],
-  "→ Narita Express to Shinjuku, ~80 min, ~¥3,250 (reserved seats at the JR desk)",
-  ["16:30","Check in, shower","","Shinjuku Station"],
+  "→ Narita Express to Shinjuku, ~80 min, ~¥3,250 (reserved seats at the JR desk). Then Oedo line 1 stop to Higashi-Shinjuku, or a taxi (~¥1,200) with the cases",
+  ["16:30","Check in: Shinjuku Warm House","Self check-in with a keypad from 15:00; the code comes from the host in the Airbnb app. Two bedrooms, two bathrooms, lift. A few minutes' walk from Higashi-Shinjuku station.","Higashi-Shinjuku Station"],
   "→ Walk 12 min",
   ["17:30","Tokyo Metropolitan Government Building","Free observatory, 202m up, open to 22:00. Watch Tokyo light up at dusk; Fuji on a clear evening.","Tokyo Metropolitan Government Building"],
   "→ Walk 10 min",
@@ -414,10 +414,11 @@ const DAYS = [
   ["15:00","Oishi Park","North shore of the lake, Fuji straight across the water.","Oishi Park"],
   "→ Bus to Kawaguchiko Station",
   ["16:30","Bus back to Shinjuku","~2h. Back ~18:30."],
-  ["19:00","Dinner & admin","Fuunji tsukemen near Shinjuku south exit. Forward cases at the front desk or a 7-Eleven; laundry.","Fuunji Shinjuku"],
+  ["19:00","Dinner & admin","Fuunji tsukemen near Shinjuku south exit. No front desk at the apartment: take cases to a 7-Eleven or FamilyMart for Yamato forwarding to Kyoto (bring the Kyoto address). Laundry in the apartment.","Fuunji Shinjuku"],
  ]},
  {n:8,date:"2027-03-14",city:"hakone",title:"Tsukiji, then the whole Hakone loop",pace:"Full day, private onsen evening",steps:"~18,000",note:"One night only, so all the high ground is today. The ropeway's last run is ~16:15 in March; don't linger at lunch.",stops:[
-  "→ Oedo line Shinjuku to Tsukijishijo, 20 min",
+  ["06:30","Check out of the apartment","Check-out is before 10:00 and we won't be back, so leave with the overnight bag."],
+  "→ Oedo line direct from Higashi-Shinjuku to Tsukijishijo, ~20 min",
   ["07:00","Tsukiji Outer Market","Breakfast crawl: tamagoyaki, tuna, uni, wagyu skewers. Some stalls close Sundays, but most are open.","Tsukiji Outer Market"],
   "→ Oedo line back to Shinjuku, 20 min",
   ["09:30","Hakone Freepass + Romancecar","Odakyu counter, Shinjuku West Exit. 2-day Freepass (~¥6,500) + Romancecar seat ~¥1,200.","Odakyu Shinjuku Station"],
@@ -577,7 +578,7 @@ const BOOK = [
  ["Now","Travel insurance","Non-refundable fares, so get cancellation cover. Check it covers airspace disruption."],
  ["Now","Osaka hotel, 4 nights","Book first: holiday weekend and sumo. Free cancellation, twin room."],
  ["Now","Hakone, 1 night (Sun 14)","Private onsen only: a ryokan room with its own open-air bath (rotenburo-tsuki), or a whole-house Airbnb with a hot-spring bath. Two futons or twin beds."],
- ["Now","Tokyo hotel, 6 nights","Shinjuku. Twin, free cancellation."],
+ ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku. Self check-in from 15:00, check-out by 10:00.",true],
  ["Now","Kyoto hotel, 5 nights (Mon 15 – Sat 20)","Near Kyoto Station, which makes the Hiroshima day easy. Twin, free cancellation."],
  ["Feb","Shinkansen Kyoto ⇄ Hiroshima, Tue 16 Mar","SmartEX: 07:00 out, ~19:15 back. Seats open a month ahead."],
  ["Now","Check CA858 seats","If it's a 3-seat row, move to a pair."],
@@ -609,7 +610,7 @@ const GUIDE = [
  ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> Shinjuku (see the <a href="tokyo-map.html">satellite map of every stop</a>). MIMARU Shinjuku West, Tokyu Stay Shinjuku (in-room laundry), Sotetsu Fresa Inn.</li><li><b>Hakone (1 night, private onsen only):</b> a ryokan room with its own open-air bath (search "rotenburo-tsuki" or "room with private open-air bath"), ~¥50,000–90,000 for two with dinner. Or a whole-house Airbnb with its own hot-spring bath, ~£105–160 total; check it’s real onsen water and actually in Hakone.</li><li><b>Kyoto:</b> near Kyoto Station (<a href="kyoto-map.html">map</a>). MIMARU Kyoto Station, Sakura Terrace The Gallery, Hotel Vischio.</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
  ["Airbnb: the rules for our dates",`<ul><li>Every legal listing shows <b>Registration details</b> under Things to know (on multi-apartment listings, open one apartment first). It looks like <i>M13…</i> (home-share), <i>Special Economic Zoning Act | 大阪市指令…</i> (Osaka special zone) or a hotel/ryokan licence (旅館業法). Nothing there, don't book.</li><li><b>Tokyo, Shinjuku:</b> home-share flats in residential streets can only take guests from Friday noon to Monday noon. We're there Mon–Sun, so only a <i>hotel-licensed</i> apartment works.</li><li><b>Kyoto:</b> residential-zone home-shares are allowed only 15 Jan – 15 Mar. We arrive on 15 March, so again hotel- or ryokan-licensed places only (machiya under a ryokan licence are fine).</li><li><b>Osaka:</b> existing special-zone flats in Namba are legal; new ones stopped being approved in May 2026, so expect fewer listings.</li><li><b>Hakone:</b> rural houses are fine. Check the bath is <i>onsen</i> water and the listing is really in Hakone.</li><li>Check for twin beds or futons for two, and a late check-in route if arriving after 17:00.</li></ul>`],
  ["Getting around",`<ul><li><b>Don't buy a JR Pass.</b> Even with Hiroshima, our long-distance trains total ~¥49,000 across 18 days; a 7-day pass is ¥50,000 and doesn't cover the Nozomi.</li><li><b>Suica</b> in your phone wallet works on every train, bus and convenience store, including Kansai.</li><li><b>Hakone Freepass</b> from Shinjuku (2 days, ~¥6,500) + Romancecar ~¥1,200.</li><li><b>Shinkansen</b> Odawara → Kyoto and Kyoto ⇄ Hiroshima on the SmartEX app. E seat for Fuji.</li><li><b>Hakone:</b> the Freepass covers the Tozan train, cable car, ropeway, pirate ship and buses, including the bus to Odawara on Day 9.</li><li><b>Hiroshima:</b> Suica works on the trams. The JR ferry to Miyajima is ¥200 plus Miyajima's ¥100 visitor tax.</li><li><b>Osaka Amazing Pass</b> for Day 15.</li><li>Kyoto buses are slow. Walk, take the subway, or split a taxi (¥1,500–2,500).</li></ul>`],
- ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Tell the Kyoto hotel cases are arriving before you do (they will hold them).</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka hotel.</li><li>Hotel front desk does it. ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
+ ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Tell the Kyoto hotel cases are arriving before you do (they will hold them).</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka hotel.</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
  ["Shopping map",`<dl class="kv"><dt>Retro games</dt><dd>Super Potato (Akiba + Den Den Town), Surugaya, Mandarake, Hard-Off junk bins</dd><dt>Nintendo</dt><dd>Nintendo TOKYO (Shibuya PARCO 6F), Nintendo Museum shop, Nintendo OSAKA (Daimaru Umeda)</dd><dt>Pokémon</dt><dd>MEGA TOKYO (Ikebukuro), Shibuya PARCO, Kyoto Takashimaya, Osaka Daimaru Umeda</dd><dt>TCG</dt><dd>Hareruya 2, Yellow Submarine, Card Rush, Daiya (Nakano), Den Den Town</dd><dt>Knives</dt><dd>Kappabashi, Tsukiji, Aritsugu (Nishiki)</dd><dt>Matcha</dt><dd>Uji</dd><dt>Everything at 2am</dt><dd>Don Quijote</dd></dl><p>Browse in Akihabara, bulk-buy in Den Den Town on Day 16: often cheaper, and no carrying it across the country.</p>`],
  ["Food",`<ul><li><b>Tokyo:</b> Fuunji tsukemen, Afuri ramen, Butagumi tonkatsu, Gyukatsu Motomura, Uobei conveyor sushi, Ichiran.</li><li><b>Hakone:</b> Owakudani black eggs, soba in Gora, amazake at the teahouse.</li><li><b>Kyoto:</b> yudofu, obanzai, Katsukura tonkatsu, Nishiki street food, matcha everything in Uji.</li><li><b>Hiroshima & Miyajima:</b> Hiroshima-style okonomiyaki (layered, with noodles), grilled oysters, fried momiji manju, anago-meshi ekiben.</li><li><b>Osaka:</b> takoyaki, okonomiyaki, kushikatsu, kitsune udon, chanko nabe on sumo day.</li><li>In March: oden from convenience stores and hot canned coffee from vending machines.</li><li>Slurp. Never tip. Say <i>gochisousama deshita</i> as you leave.</li></ul>`],
  ["Money",`<ul><li>Cards widely accepted; carry ¥10,000–20,000 cash for small places and temples.</li><li>Always pay in <b>yen</b>, never GBP.</li><li>7-Eleven and Japan Post ATMs take foreign cards. Don't buy yen in the UK.</li><li>No tipping.</li></ul>`],
