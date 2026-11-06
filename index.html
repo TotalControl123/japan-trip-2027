@@ -264,12 +264,11 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
         <tbody id="bookedRows"></tbody>
       </table>
     </div>
-    <h3>If we need to trim (to ~£2,658)</h3>
+    <h3>If we need to trim (to ~£2,897)</h3>
     <div class="box">
       <table>
         <tbody>
-          <tr><td>Budget hotels (APA / Toyoko) instead of apartment-hotels, keep the onsen night</td><td class="r">–£170</td></tr>
-          <tr><td>Skip Disney Premier Access (it's a quiet weekday anyway)</td><td class="r">–£25</td></tr>
+                    <tr><td>Skip Disney Premier Access (it's a quiet weekday anyway)</td><td class="r">–£25</td></tr>
           <tr><td>Food at ¥5,000 a day</td><td class="r">–£85</td></tr>
           <tr><td>Halve the shopping budget</td><td class="r">–£125</td></tr>
         </tbody>
@@ -314,7 +313,7 @@ const CITY = {
   tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · booked: Shinjuku Warm House, Higashi-Shinjuku",map:"tokyo-map.html"},
   hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · booked: FUMI, forest house with private outdoor bath"},
   kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · booked: Kyoto Birch House Spring, Tofukuji",map:"kyoto-map.html"},
-  osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · base: Namba",map:"osaka-map.html"}
+  osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · booked: FDS Aura, Nagahoribashi",map:"osaka-map.html"}
 };
 // stop: [time, heading, detail, mapQuery (optional), optional?]
 const DAYS = [
@@ -528,14 +527,15 @@ const DAYS = [
   ["10:00","Nigatsu-do","Hillside hall with a balcony over Nara. Free.","Nigatsu-do"],
   ["10:45","Kasuga Taisha","3,000 lanterns along the forest approach. ¥700 inner area.","Kasuga Taisha"],
   ["12:00","Naramachi & lunch","Kakinoha-zushi; watch the mochi pounding at Nakatanidou.","Nakatanidou"],
-  "→ Kintetsu Nara to Osaka Namba, 40 min",
-  ["15:00","Check in, Namba","",""],
-  ["16:00","Shinsaibashi-suji & Amerikamura","Covered shopping street and vintage clothes.","Shinsaibashi-suji"],
+  "→ Kintetsu Nara to Nippombashi, ~40 min. Day bag only (cases were sent ahead); coin locker if needed",
+  ["14:00","Shinsaibashi-suji & Amerikamura","Covered shopping street and vintage clothes.","Shinsaibashi-suji"],
+  "→ Walk ~10 min east, or Nagahori line 1 stop Shinsaibashi → Nagahoribashi + 7 min on foot",
+  ["16:00","Check in: FDS Aura","Self check-in with a lockbox from 16:00; no reception. Two bedrooms, a king bed each, lift, washing machine.","Nagahoribashi Station"],
   ["18:00","Dotonbori","Glico sign, takoyaki at Wanaka, okonomiyaki at Mizuno, kushikatsu at Daruma.","Dotonbori"],
   ["20:30","Hozenji Yokocho","Stone lane and lantern-lit shrine behind Dotonbori.","Hozenji Yokocho"],
  ]},
  {n:15,date:"2027-03-21",city:"osaka",title:"Osaka Castle, Shinsekai & Grand Sumo",pace:"Full",steps:"~22,000",note:"Buy an Osaka Amazing Pass (~¥3,300): free entry to the castle, Tsutenkaku and Umeda Sky. Sumo tickets on sale 6 February.",stops:[
-  "→ Subway to Tanimachi 4-chome, 15 min",
+  "→ Nagahori line 1 stop to Tanimachi 6-chome, then Tanimachi line 2 stops to Tanimachi 4-chome, ~15 min",
   ["09:00","Osaka Castle","Opens 09:00. Keep museum and top-floor view, then the plum grove (~1,200 trees).","Osaka Castle"],
   "→ Subway to Nippombashi, 15 min",
   ["11:30","Kuromon Market","Lunch at the stalls: scallops, wagyu, uni.","Kuromon Market"],
@@ -574,9 +574,11 @@ const DAYS = [
   ["20:00","Namba: late dinner","Packing was done last night, so just bed."],
  ]},
  {n:18,date:"2027-03-24",city:"osaka",title:"Last morning, then home",pace:"Short morning",steps:"~10,000",stops:[
-  ["08:30","Breakfast at Kuromon or a café","","Kuromon Market"],
-  ["09:30","Last shop","Don Quijote Dotonbori for gifts; Takashimaya depachika (food hall) for edible souvenirs.","Don Quijote Dotonbori"],
-  ["12:30","Collect bags",""],
+  ["09:30","Check out of FDS Aura","Check-out is by 10:00 and there's no reception, so take the cases."],
+  "→ Sakaisuji line to Nippombashi (1 stop), walk to Nankai Namba, ~15 min",
+  ["10:00","Cases into big coin lockers at Nankai Namba","Then brunch at Kuromon Market, 5 min away.","Kuromon Market"],
+  ["11:00","Last shop","Don Quijote Dotonbori for gifts; Takashimaya depachika (food hall) for edible souvenirs.","Don Quijote Dotonbori"],
+  ["12:30","Collect cases from the lockers",""],
   "→ Nankai Rapi:t Namba to Kansai airport, 38 min, ¥1,490",
   ["13:30","Kansai airport","Check-in and the tax-free refund. Last Kit-Kats airside.","Kansai International Airport"],
   ["16:30","CA858 to Shanghai","8 hours airside, then CA847 at 02:25. Gatwick Thu 25 March, 07:10."],
@@ -586,7 +588,7 @@ const DAYS = [
 const BOOK = [
  ["done","Flights","Air China via Shanghai. Paid.",true],
  ["Now","Travel insurance","Non-refundable fares, so get cancellation cover. Check it covers airspace disruption."],
- ["Now","Osaka hotel, 4 nights","Book first: holiday weekend and sumo. Free cancellation, twin room."],
+ ["done","Osaka: FDS Aura, Sat 20 – Wed 24","Two bedrooms near Nagahoribashi. Ask the host about receiving the cases from Kyoto (no reception), or book an evening Yamato slot on Sat 20.",true],
  ["done","Hakone: FUMI, Sun 14","Forest house, 3 bedrooms, private outdoor cypress bath. Self check-in from 15:00, check-out by 11:00.",true],
  ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku. Self check-in from 15:00, check-out by 10:00.",true],
  ["done","Kyoto: Kyoto Birch House Spring, Mon 15 – Sat 20","Two bedrooms, near Tofukuji station. Send the host passport photos; message about the luggage delivery, the second bedroom's futons and the early departure on the 20th.",true],
@@ -616,20 +618,21 @@ const BOOKED = [
  ["Tokyo: Shinjuku Warm House, 6 nights", 739, "stay", 6],
  ["Hakone: FUMI, 1 night", 274, "stay", 1],
  ["Kyoto: Kyoto Birch House Spring, 5 nights", 514, "stay", 5],
+ ["Osaka: FDS Aura, 4 nights", 340, "stay", 4],
 ];
-const STAY_BUDGET_EACH = 865, STAY_NIGHTS = 16;
+const STAY_BUDGET_EACH = 933.5, STAY_NIGHTS = 16;
 
 const BUDGET = [
- ["Flights (paid)",null,578],["Accommodation, 16 nights (12 booked; Osaka estimated)","¥173,000",865],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
+ ["Flights (paid)",null,578],["Accommodation, 16 nights (all booked)","¥186,700",934],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
  ["DisneySea + USJ with Express","¥38,000",190],["Sumo, Nintendo Museum, Shibuya Sky, teamLab, sights","¥32,000",160],
  ["Food & drink, ¥6,000 a day","¥102,000",510],["Shopping","¥50,000",250],["Insurance & eSIM",null,55],["Contingency, ~5%",null,130]
 ];
 
 const GUIDE = [
- ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> booked, Kyoto Birch House Spring near Tofukuji station (<a href="kyoto-map.html">map</a>).</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
+ ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> booked, Kyoto Birch House Spring near Tofukuji station (<a href="kyoto-map.html">map</a>).</li><li><b>Osaka:</b> booked, FDS Aura near Nagahoribashi station (<a href="osaka-map.html">map</a>).</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
  ["Airbnb: the rules for our dates",`<ul><li>Every legal listing shows <b>Registration details</b> under Things to know (on multi-apartment listings, open one apartment first). It looks like <i>M13…</i> (home-share), <i>Special Economic Zoning Act | 大阪市指令…</i> (Osaka special zone) or a hotel/ryokan licence (旅館業法). Nothing there, don't book.</li><li><b>Tokyo, Shinjuku:</b> home-share flats in residential streets can only take guests from Friday noon to Monday noon. We're there Mon–Sun, so only a <i>hotel-licensed</i> apartment works.</li><li><b>Kyoto:</b> residential-zone home-shares are allowed only 15 Jan – 15 Mar. We arrive on 15 March, so again hotel- or ryokan-licensed places only (machiya under a ryokan licence are fine).</li><li><b>Osaka:</b> existing special-zone flats in Namba are legal; new ones stopped being approved in May 2026, so expect fewer listings.</li><li><b>Hakone:</b> rural houses are fine. Check the bath is <i>onsen</i> water and the listing is really in Hakone.</li><li>Check for twin beds or futons for two, and a late check-in route if arriving after 17:00.</li></ul>`],
  ["Getting around",`<ul><li><b>Don't buy a JR Pass.</b> Even with Hiroshima, our long-distance trains total ~¥49,000 across 18 days; a 7-day pass is ¥50,000 and doesn't cover the Nozomi.</li><li><b>Suica</b> in your phone wallet works on every train, bus and convenience store, including Kansai.</li><li><b>Hakone Freepass</b> from Shinjuku (2 days, ~¥6,500) + Romancecar ~¥1,200.</li><li><b>Shinkansen</b> Odawara → Kyoto and Kyoto ⇄ Hiroshima on the SmartEX app. E seat for Fuji.</li><li><b>Hakone:</b> the Freepass covers the Tozan train, cable car, ropeway, pirate ship and buses, including the bus to Odawara on Day 9.</li><li><b>Hiroshima:</b> Suica works on the trams. The JR ferry to Miyajima is ¥200 plus Miyajima's ¥100 visitor tax.</li><li><b>Osaka Amazing Pass</b> for Day 15.</li><li>Kyoto buses are slow. Walk, take the subway, or split a taxi (¥1,500–2,500).</li></ul>`],
- ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Kyoto is self check-in: ask the host whether they can receive the cases, or book a Yamato delivery slot for the evening of Mon 15.</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka from a convenience store near Tofukuji (ask the host which one).</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
+ ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Kyoto is self check-in: ask the host whether they can receive the cases, or book a Yamato delivery slot for the evening of Mon 15.</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka from a convenience store near Tofukuji (ask the host which one).</li><li>Osaka is self check-in too: ask the FDS Aura host about receiving the cases, or book a Yamato evening slot for Sat 20.</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
  ["Shopping map",`<dl class="kv"><dt>Retro games</dt><dd>Super Potato (Akiba + Den Den Town), Surugaya, Mandarake, Hard-Off junk bins</dd><dt>Nintendo</dt><dd>Nintendo TOKYO (Shibuya PARCO 6F), Nintendo Museum shop, Nintendo OSAKA (Daimaru Umeda)</dd><dt>Pokémon</dt><dd>MEGA TOKYO (Ikebukuro), Shibuya PARCO, Kyoto Takashimaya, Osaka Daimaru Umeda</dd><dt>TCG</dt><dd>Hareruya 2, Yellow Submarine, Card Rush, Daiya (Nakano), Den Den Town</dd><dt>Knives</dt><dd>Kappabashi, Tsukiji, Aritsugu (Nishiki)</dd><dt>Matcha</dt><dd>Uji</dd><dt>Everything at 2am</dt><dd>Don Quijote</dd></dl><p>Browse in Akihabara, bulk-buy in Den Den Town on Day 16: often cheaper, and no carrying it across the country.</p>`],
  ["Food",`<ul><li><b>Tokyo:</b> Fuunji tsukemen, Afuri ramen, Butagumi tonkatsu, Gyukatsu Motomura, Uobei conveyor sushi, Ichiran.</li><li><b>Hakone:</b> Owakudani black eggs, soba in Gora, amazake at the teahouse.</li><li><b>Kyoto:</b> yudofu, obanzai, Katsukura tonkatsu, Nishiki street food, matcha everything in Uji.</li><li><b>Hiroshima & Miyajima:</b> Hiroshima-style okonomiyaki (layered, with noodles), grilled oysters, fried momiji manju, anago-meshi ekiben.</li><li><b>Osaka:</b> takoyaki, okonomiyaki, kushikatsu, kitsune udon, chanko nabe on sumo day.</li><li>In March: oden from convenience stores and hot canned coffee from vending machines.</li><li>Slurp. Never tip. Say <i>gochisousama deshita</i> as you leave.</li></ul>`],
  ["Money",`<ul><li>Cards widely accepted; carry ¥10,000–20,000 cash for small places and temples.</li><li>Always pay in <b>yen</b>, never GBP.</li><li>7-Eleven and Japan Post ATMs take foreign cards. Don't buy yen in the UK.</li><li>No tipping.</li></ul>`],
@@ -761,7 +764,7 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
   const left = STAY_BUDGET_EACH - stayEach, nightsLeft = STAY_NIGHTS - nights;
   $("#bookedRows").innerHTML = BOOKED.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${f(r[1])}</td><td class="r">${f(r[1]/2)}</td></tr>`).join("")
    + `<tr class="tot"><td>Paid so far</td><td class="r">${f(tot)}</td><td class="r">${f(tot/2)}</td></tr>`
-   + `<tr><td colspan="3" style="color:var(--muted)">Accommodation: ${nights} of ${STAY_NIGHTS} nights booked, ${f(stayEach)} each against a ${f(STAY_BUDGET_EACH)} budget. ${f(left)} each left for the other ${nightsLeft} nights (~${f(left/nightsLeft)} each a night).</td></tr>`;
+   + `<tr><td colspan="3" style="color:var(--muted)">${nightsLeft<=0 ? `All ${STAY_NIGHTS} nights booked: ${f(stayEach)} each for accommodation (~${f(stayEach/STAY_NIGHTS)} each a night).` : `Accommodation: ${nights} of ${STAY_NIGHTS} nights booked, ${f(stayEach)} each against a ${f(STAY_BUDGET_EACH)} budget. ${f(left)} each left for the other ${nightsLeft} nights (~${f(left/nightsLeft)} each a night).`}</td></tr>`;
 })();
 
 /* ======================= GUIDE ======================= */
