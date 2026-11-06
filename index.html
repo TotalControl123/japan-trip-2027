@@ -264,7 +264,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
         <tbody id="bookedRows"></tbody>
       </table>
     </div>
-    <h3>If we need to trim (to ~£2,570)</h3>
+    <h3>If we need to trim (to ~£2,658)</h3>
     <div class="box">
       <table>
         <tbody>
@@ -313,7 +313,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
 const CITY = {
   tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · booked: Shinjuku Warm House, Higashi-Shinjuku",map:"tokyo-map.html"},
   hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · booked: FUMI, forest house with private outdoor bath"},
-  kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · incl. Hiroshima day",map:"kyoto-map.html"},
+  kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · booked: Kyoto Birch House Spring, Tofukuji",map:"kyoto-map.html"},
   osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · base: Namba",map:"osaka-map.html"}
 };
 // stop: [time, heading, detail, mapQuery (optional), optional?]
@@ -449,15 +449,18 @@ const DAYS = [
   ["11:15","Old Tokaido Road & Amazake-chaya","400-year-old cedar avenue and a 17th-century teahouse serving sweet amazake.","Amazake-chaya"],
   "→ Bus to Odawara, ~1h, covered by the Freepass. Buy an ekiben at Odawara",
   ["13:30","Hikari shinkansen to Kyoto","~2h, ~¥11,500. E seat for a last look at Fuji."],
-  ["15:45","Kyoto Station","Cases should be at the hotel; drop the overnight bag."],
-  "→ Subway to Shijo, 10 min",
-  ["16:30","Nishiki Market","130 stalls, most close ~18:00. Snack as you go. Aritsugu for a knife.","Nishiki Market"],
-  ["17:15","Teramachi & Shinkyogoku","Covered arcades; Pokémon Center Kyoto in Takashimaya.","Pokemon Center Kyoto"],
+  ["15:45","Kyoto Station","Change to the JR Nara line."],
+  "→ JR Nara line 1 stop to Tofukuji, 3 min, then 4 min on foot",
+  ["16:15","Check in: Kyoto Birch House Spring","Self check-in. Drop the overnight bag; the cases should be waiting if the host took the delivery."],
+  "→ Keihan line Tofukuji to Gion-Shijo, ~6 min, then walk 5 min",
+  ["16:45","Nishiki Market","130 stalls, most close ~18:00. Snack as you go. Aritsugu for a knife.","Nishiki Market"],
+  ["17:20","Teramachi & Shinkyogoku","Covered arcades; Pokémon Center Kyoto in Takashimaya.","Pokemon Center Kyoto"],
   "→ Walk 10 min",
   ["18:00","Yasaka Shrine & Gion at dusk","Sunset ~18:00: lanterns coming on along Hanamikoji-dori and Shirakawa.","Shirakawa Gion"],
   ["19:30","Pontocho dinner","Lantern-lit lane by the river.","Pontocho"],
  ]},
  {n:10,date:"2027-03-16",city:"kyoto",title:"Day trip: Hiroshima & Miyajima",pace:"Full · 06:15 alarm",steps:"~22,000",note:"~3h30 of bullet train today, all reserved seats. Book SmartEX for Kyoto ⇄ Hiroshima (~¥11,500 each way). Check the Miyajima tide table: high tide for the 'floating' torii, low tide to walk out to it.",stops:[
+  "→ Leave the house 06:40: JR Nara line 1 stop to Kyoto Station, 3 min",
   ["07:00","Nozomi Kyoto → Hiroshima","~1h40. Breakfast onboard from the station konbini."],
   "→ Tram 2 or 6 to Genbaku-Dome-mae, 15 min",
   ["09:00","Atomic Bomb Dome & Peace Park","The dome, the cenotaph and the Children's Peace Monument with its paper cranes.","Atomic Bomb Dome"],
@@ -472,7 +475,7 @@ const DAYS = [
   ["19:15","Nozomi Hiroshima → Kyoto","Ekiben for dinner (anago-meshi, Miyajima's conger-eel rice). Back ~21:00."],
  ]},
  {n:11,date:"2027-03-17",city:"kyoto",title:"Nintendo Museum, Uji & Fushimi Inari",pace:"Full",steps:"~24,000",note:"Lottery during December: pick 10:00 if offered. Photo ID required. Closed Tuesdays.",stops:[
-  "→ Kintetsu from Kyoto Station to Ogura, 20 min",
+  "→ JR 1 stop to Kyoto Station, then Kintetsu to Ogura, ~30 min",
   ["09:45","Nintendo Museum","~¥3,300. 1889 to now, interactive coin games, Hatena Burger café, exclusive shop. 3 hours.","Nintendo Museum Uji"],
   "→ Kintetsu + JR to Uji, 15 min",
   ["13:15","Lunch: Nakamura Tokichi","Matcha soba and matcha jelly (since 1854).","Nakamura Tokichi Honten"],
@@ -485,7 +488,7 @@ const DAYS = [
   ["19:00","Street food by Inari station","Then JR to Kyoto, 5 min."],
  ]},
  {n:12,date:"2027-03-18",city:"kyoto",title:"Higashiyama at dawn",pace:"Full · 05:45 alarm",steps:"~30,000",stops:[
-  "→ Taxi from the hotel, ~15 min, ~¥1,500",
+  "→ Taxi from the house, ~10 min, ~¥1,200",
   ["06:00","Kiyomizu-dera","Opens 06:00. The wooden stage over the hillside, almost empty. ¥400.","Kiyomizu-dera"],
   ["07:00","Sannenzaka, Ninenzaka & Yasaka Pagoda","The classic lanes with nobody in them.","Hokan-ji Yasaka Pagoda"],
   ["08:00","Breakfast: % Arabica Higashiyama","","% Arabica Kyoto Higashiyama"],
@@ -519,7 +522,7 @@ const DAYS = [
   ["18:30","Kyoto Station: Skyway & dinner","Free sky walkway on the 11th floor; Ramen Street on 10F.","Kyoto Station Building"],
  ]},
  {n:14,date:"2027-03-20",city:"osaka",title:"Nara, then Osaka by night",pace:"Full · holiday weekend",steps:"~24,000",stops:[
-  "→ Kintetsu Kyoto to Kintetsu Nara, ~45 min",
+  "→ Check out ~07:00. JR 1 stop to Kyoto Station, then Kintetsu to Kintetsu Nara, ~50 min in all",
   ["08:00","Kofuku-ji & Nara Park","Five-storey pagoda, then the deer (¥200 crackers).","Kofuku-ji"],
   ["08:45","Todai-ji","Opens 08:00, ¥800. The 15m bronze Buddha; squeeze through the nostril pillar.","Todai-ji"],
   ["10:00","Nigatsu-do","Hillside hall with a balcony over Nara. Free.","Nigatsu-do"],
@@ -586,7 +589,7 @@ const BOOK = [
  ["Now","Osaka hotel, 4 nights","Book first: holiday weekend and sumo. Free cancellation, twin room."],
  ["done","Hakone: FUMI, Sun 14","Forest house, 3 bedrooms, private outdoor cypress bath. Self check-in from 15:00, check-out by 11:00.",true],
  ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku. Self check-in from 15:00, check-out by 10:00.",true],
- ["Now","Kyoto hotel, 5 nights (Mon 15 – Sat 20)","Near Kyoto Station, which makes the Hiroshima day easy. Twin, free cancellation."],
+ ["done","Kyoto: Kyoto Birch House Spring, Mon 15 – Sat 20","Two bedrooms, near Tofukuji station. Send the host passport photos; message about the luggage delivery, the second bedroom's futons and the early departure on the 20th.",true],
  ["Feb","Shinkansen Kyoto ⇄ Hiroshima, Tue 16 Mar","SmartEX: 07:00 out, ~19:15 back. Seats open a month ahead."],
  ["Now","Check CA858 seats","If it's a 3-seat row, move to a pair."],
  ["December","Nintendo Museum lottery","Enter during December for Wed 17 March. Free Nintendo Account, both full names, pick 2–3 time slots. Results 1 Jan."],
@@ -612,20 +615,21 @@ const BOOKED = [
  ["Flights, Air China", 1156, "flight"],
  ["Tokyo: Shinjuku Warm House, 6 nights", 739, "stay", 6],
  ["Hakone: FUMI, 1 night", 274, "stay", 1],
+ ["Kyoto: Kyoto Birch House Spring, 5 nights", 514, "stay", 5],
 ];
-const STAY_BUDGET_EACH = 780, STAY_NIGHTS = 16;
+const STAY_BUDGET_EACH = 865, STAY_NIGHTS = 16;
 
 const BUDGET = [
- ["Flights (paid)",null,578],["Accommodation, 16 nights (Tokyo & Hakone booked; Kyoto & Osaka estimated)","¥156,000",780],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
+ ["Flights (paid)",null,578],["Accommodation, 16 nights (12 booked; Osaka estimated)","¥173,000",865],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
  ["DisneySea + USJ with Express","¥38,000",190],["Sumo, Nintendo Museum, Shibuya Sky, teamLab, sights","¥32,000",160],
  ["Food & drink, ¥6,000 a day","¥102,000",510],["Shopping","¥50,000",250],["Insurance & eSIM",null,55],["Contingency, ~5%",null,130]
 ];
 
 const GUIDE = [
- ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> near Kyoto Station (<a href="kyoto-map.html">map</a>). MIMARU Kyoto Station, Sakura Terrace The Gallery, Hotel Vischio.</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
+ ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> booked, Kyoto Birch House Spring near Tofukuji station (<a href="kyoto-map.html">map</a>).</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
  ["Airbnb: the rules for our dates",`<ul><li>Every legal listing shows <b>Registration details</b> under Things to know (on multi-apartment listings, open one apartment first). It looks like <i>M13…</i> (home-share), <i>Special Economic Zoning Act | 大阪市指令…</i> (Osaka special zone) or a hotel/ryokan licence (旅館業法). Nothing there, don't book.</li><li><b>Tokyo, Shinjuku:</b> home-share flats in residential streets can only take guests from Friday noon to Monday noon. We're there Mon–Sun, so only a <i>hotel-licensed</i> apartment works.</li><li><b>Kyoto:</b> residential-zone home-shares are allowed only 15 Jan – 15 Mar. We arrive on 15 March, so again hotel- or ryokan-licensed places only (machiya under a ryokan licence are fine).</li><li><b>Osaka:</b> existing special-zone flats in Namba are legal; new ones stopped being approved in May 2026, so expect fewer listings.</li><li><b>Hakone:</b> rural houses are fine. Check the bath is <i>onsen</i> water and the listing is really in Hakone.</li><li>Check for twin beds or futons for two, and a late check-in route if arriving after 17:00.</li></ul>`],
  ["Getting around",`<ul><li><b>Don't buy a JR Pass.</b> Even with Hiroshima, our long-distance trains total ~¥49,000 across 18 days; a 7-day pass is ¥50,000 and doesn't cover the Nozomi.</li><li><b>Suica</b> in your phone wallet works on every train, bus and convenience store, including Kansai.</li><li><b>Hakone Freepass</b> from Shinjuku (2 days, ~¥6,500) + Romancecar ~¥1,200.</li><li><b>Shinkansen</b> Odawara → Kyoto and Kyoto ⇄ Hiroshima on the SmartEX app. E seat for Fuji.</li><li><b>Hakone:</b> the Freepass covers the Tozan train, cable car, ropeway, pirate ship and buses, including the bus to Odawara on Day 9.</li><li><b>Hiroshima:</b> Suica works on the trams. The JR ferry to Miyajima is ¥200 plus Miyajima's ¥100 visitor tax.</li><li><b>Osaka Amazing Pass</b> for Day 15.</li><li>Kyoto buses are slow. Walk, take the subway, or split a taxi (¥1,500–2,500).</li></ul>`],
- ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Tell the Kyoto hotel cases are arriving before you do (they will hold them).</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka hotel.</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
+ ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Kyoto is self check-in: ask the host whether they can receive the cases, or book a Yamato delivery slot for the evening of Mon 15.</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka from a convenience store near Tofukuji (ask the host which one).</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
  ["Shopping map",`<dl class="kv"><dt>Retro games</dt><dd>Super Potato (Akiba + Den Den Town), Surugaya, Mandarake, Hard-Off junk bins</dd><dt>Nintendo</dt><dd>Nintendo TOKYO (Shibuya PARCO 6F), Nintendo Museum shop, Nintendo OSAKA (Daimaru Umeda)</dd><dt>Pokémon</dt><dd>MEGA TOKYO (Ikebukuro), Shibuya PARCO, Kyoto Takashimaya, Osaka Daimaru Umeda</dd><dt>TCG</dt><dd>Hareruya 2, Yellow Submarine, Card Rush, Daiya (Nakano), Den Den Town</dd><dt>Knives</dt><dd>Kappabashi, Tsukiji, Aritsugu (Nishiki)</dd><dt>Matcha</dt><dd>Uji</dd><dt>Everything at 2am</dt><dd>Don Quijote</dd></dl><p>Browse in Akihabara, bulk-buy in Den Den Town on Day 16: often cheaper, and no carrying it across the country.</p>`],
  ["Food",`<ul><li><b>Tokyo:</b> Fuunji tsukemen, Afuri ramen, Butagumi tonkatsu, Gyukatsu Motomura, Uobei conveyor sushi, Ichiran.</li><li><b>Hakone:</b> Owakudani black eggs, soba in Gora, amazake at the teahouse.</li><li><b>Kyoto:</b> yudofu, obanzai, Katsukura tonkatsu, Nishiki street food, matcha everything in Uji.</li><li><b>Hiroshima & Miyajima:</b> Hiroshima-style okonomiyaki (layered, with noodles), grilled oysters, fried momiji manju, anago-meshi ekiben.</li><li><b>Osaka:</b> takoyaki, okonomiyaki, kushikatsu, kitsune udon, chanko nabe on sumo day.</li><li>In March: oden from convenience stores and hot canned coffee from vending machines.</li><li>Slurp. Never tip. Say <i>gochisousama deshita</i> as you leave.</li></ul>`],
  ["Money",`<ul><li>Cards widely accepted; carry ¥10,000–20,000 cash for small places and temples.</li><li>Always pay in <b>yen</b>, never GBP.</li><li>7-Eleven and Japan Post ATMs take foreign cards. Don't buy yen in the UK.</li><li>No tipping.</li></ul>`],
