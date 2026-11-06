@@ -257,7 +257,14 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
         <tbody id="budgetRows"></tbody>
       </table>
     </div>
-    <h3>If we need to trim (to ~£2,370)</h3>
+    <h3>Booked so far</h3>
+    <div class="box">
+      <table>
+        <thead><tr><th>What</th><th class="r">Both of us</th><th class="r">Each</th></tr></thead>
+        <tbody id="bookedRows"></tbody>
+      </table>
+    </div>
+    <h3>If we need to trim (to ~£2,570)</h3>
     <div class="box">
       <table>
         <tbody>
@@ -305,7 +312,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
 /* ======================= DATA ======================= */
 const CITY = {
   tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · booked: Shinjuku Warm House, Higashi-Shinjuku",map:"tokyo-map.html"},
-  hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · private onsen"},
+  hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · booked: FUMI, forest house with private outdoor bath"},
   kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · incl. Hiroshima day",map:"kyoto-map.html"},
   osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · base: Namba",map:"osaka-map.html"}
 };
@@ -428,13 +435,13 @@ const DAYS = [
   ["13:00","Hakone Open-Air Museum","¥1,600 (discount with pass). Sculptures, Picasso pavilion, foot bath. 1h30.","Hakone Open-Air Museum"],
   "→ Cable car Gora–Sounzan, 10 min, then Hakone Ropeway",
   ["15:00","Owakudani","Over the steaming volcanic valley, Fuji on the left. Black eggs (¥500 for 5). 40 min.","Owakudani"],
-  "→ Ropeway to Togendai, 25 min. Then bus to your stay",
-  ["17:00","Check in: private onsen","Your own hot-spring bath, no shared baths. Soak before dinner."],
-  ["18:30","Dinner","Ryokan: kaiseki in the room. Airbnb: Hakone restaurants close 19:00–20:00, so eat early near the stay or bring food from Gora or Yumoto."],
+  "→ Ropeway to Togendai, 25 min. Then bus to FUMI's stop (address in the booking) and a steep 10-min walk uphill",
+  ["17:00","Check in: FUMI","Smart-lock self check-in from 15:00. Our own outdoor cypress bath in the forest, no shared baths. Soak before dinner."],
+  ["18:30","Dinner","Hakone restaurants close 19:00–20:00. FUMI has a kitchen: buy supplies in Gora at lunch (or ask the host what's near the bus stop) and cook in."],
   ["21:00","Second soak, early night",""],
  ]},
  {n:9,date:"2027-03-15",city:"kyoto",title:"Lake Ashi, then Kyoto by dusk",pace:"Full · travel day",steps:"~20,000",note:"Pirate ship timetables change by season; check the first Togendai sailing the night before.",stops:[
-  ["08:00","Morning soak, check out",""],
+  ["08:00","Morning soak, check out","Check-out by 11:00, but leave by ~08:45 for the ship. 10 min downhill to the bus."],
   "→ Bus to Togendai port",
   ["09:30","Pirate ship across Lake Ashi","Togendai to Moto-Hakone, 40 min. Top deck, Fuji over the water if it's clear.","Togendai Port"],
   ["10:30","Hakone Shrine","The red torii standing in the lake. Get the photo before the tour groups.","Hakone Shrine"],
@@ -577,7 +584,7 @@ const BOOK = [
  ["done","Flights","Air China via Shanghai. Paid.",true],
  ["Now","Travel insurance","Non-refundable fares, so get cancellation cover. Check it covers airspace disruption."],
  ["Now","Osaka hotel, 4 nights","Book first: holiday weekend and sumo. Free cancellation, twin room."],
- ["Now","Hakone, 1 night (Sun 14)","Private onsen only: a ryokan room with its own open-air bath (rotenburo-tsuki), or a whole-house Airbnb with a hot-spring bath. Two futons or twin beds."],
+ ["done","Hakone: FUMI, Sun 14","Forest house, 3 bedrooms, private outdoor cypress bath. Self check-in from 15:00, check-out by 11:00.",true],
  ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku. Self check-in from 15:00, check-out by 10:00.",true],
  ["Now","Kyoto hotel, 5 nights (Mon 15 – Sat 20)","Near Kyoto Station, which makes the Hiroshima day easy. Twin, free cancellation."],
  ["Feb","Shinkansen Kyoto ⇄ Hiroshima, Tue 16 Mar","SmartEX: 07:00 out, ~19:15 back. Seats open a month ahead."],
@@ -600,14 +607,22 @@ const PACK = [
  "Broken-in walking shoes (20,000+ steps a day)","Blister plasters","Warm jacket, hat and gloves","Layers for 4–13°C days","Slip-on shoes for temples and the onsen stay","Decent socks (they'll be seen)","Small towel for the onsen","Foldable tote for rubbish and shopping","Foldable spare bag for the flight home","Type A plug adapter (100V)","Power bank (hand luggage only)","Phone with Suica, eSIM, Visit Japan Web QR screenshots","Offline Google Maps and Translate (Japanese)","Films and music downloaded for Shanghai","Apps: Disney, USJ, SmartEX, Air China, Nintendo Account","Copies of hotel addresses in Japanese","Card with no FX fees + some yen once there","About 6 days of clothes (laundry on Day 7 and in the Osaka flat)"
 ];
 
+// Real amounts paid, total for both of us. Add a row each time something is booked.
+const BOOKED = [
+ ["Flights, Air China", 1156, "flight"],
+ ["Tokyo: Shinjuku Warm House, 6 nights", 739, "stay", 6],
+ ["Hakone: FUMI, 1 night", 274, "stay", 1],
+];
+const STAY_BUDGET_EACH = 780, STAY_NIGHTS = 16;
+
 const BUDGET = [
- ["Flights (paid)",null,578],["Accommodation, 16 nights incl. 1 onsen night","¥116,000",580],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
+ ["Flights (paid)",null,578],["Accommodation, 16 nights (Tokyo & Hakone booked; Kyoto & Osaka estimated)","¥156,000",780],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
  ["DisneySea + USJ with Express","¥38,000",190],["Sumo, Nintendo Museum, Shibuya Sky, teamLab, sights","¥32,000",160],
  ["Food & drink, ¥6,000 a day","¥102,000",510],["Shopping","¥50,000",250],["Insurance & eSIM",null,55],["Contingency, ~5%",null,130]
 ];
 
 const GUIDE = [
- ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> Shinjuku (see the <a href="tokyo-map.html">satellite map of every stop</a>). MIMARU Shinjuku West, Tokyu Stay Shinjuku (in-room laundry), Sotetsu Fresa Inn.</li><li><b>Hakone (1 night, private onsen only):</b> a ryokan room with its own open-air bath (search "rotenburo-tsuki" or "room with private open-air bath"), ~¥50,000–90,000 for two with dinner. Or a whole-house Airbnb with its own hot-spring bath, ~£105–160 total; check it’s real onsen water and actually in Hakone.</li><li><b>Kyoto:</b> near Kyoto Station (<a href="kyoto-map.html">map</a>). MIMARU Kyoto Station, Sakura Terrace The Gallery, Hotel Vischio.</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
+ ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> near Kyoto Station (<a href="kyoto-map.html">map</a>). MIMARU Kyoto Station, Sakura Terrace The Gallery, Hotel Vischio.</li><li><b>Osaka:</b> Namba (<a href="osaka-map.html">map</a>). Candeo Hotels Namba, MIMARU Shinsaibashi, Cross Hotel.</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
  ["Airbnb: the rules for our dates",`<ul><li>Every legal listing shows <b>Registration details</b> under Things to know (on multi-apartment listings, open one apartment first). It looks like <i>M13…</i> (home-share), <i>Special Economic Zoning Act | 大阪市指令…</i> (Osaka special zone) or a hotel/ryokan licence (旅館業法). Nothing there, don't book.</li><li><b>Tokyo, Shinjuku:</b> home-share flats in residential streets can only take guests from Friday noon to Monday noon. We're there Mon–Sun, so only a <i>hotel-licensed</i> apartment works.</li><li><b>Kyoto:</b> residential-zone home-shares are allowed only 15 Jan – 15 Mar. We arrive on 15 March, so again hotel- or ryokan-licensed places only (machiya under a ryokan licence are fine).</li><li><b>Osaka:</b> existing special-zone flats in Namba are legal; new ones stopped being approved in May 2026, so expect fewer listings.</li><li><b>Hakone:</b> rural houses are fine. Check the bath is <i>onsen</i> water and the listing is really in Hakone.</li><li>Check for twin beds or futons for two, and a late check-in route if arriving after 17:00.</li></ul>`],
  ["Getting around",`<ul><li><b>Don't buy a JR Pass.</b> Even with Hiroshima, our long-distance trains total ~¥49,000 across 18 days; a 7-day pass is ¥50,000 and doesn't cover the Nozomi.</li><li><b>Suica</b> in your phone wallet works on every train, bus and convenience store, including Kansai.</li><li><b>Hakone Freepass</b> from Shinjuku (2 days, ~¥6,500) + Romancecar ~¥1,200.</li><li><b>Shinkansen</b> Odawara → Kyoto and Kyoto ⇄ Hiroshima on the SmartEX app. E seat for Fuji.</li><li><b>Hakone:</b> the Freepass covers the Tozan train, cable car, ropeway, pirate ship and buses, including the bus to Odawara on Day 9.</li><li><b>Hiroshima:</b> Suica works on the trams. The JR ferry to Miyajima is ¥200 plus Miyajima's ¥100 visitor tax.</li><li><b>Osaka Amazing Pass</b> for Day 15.</li><li>Kyoto buses are slow. Walk, take the subway, or split a taxi (¥1,500–2,500).</li></ul>`],
  ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Tell the Kyoto hotel cases are arriving before you do (they will hold them).</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka hotel.</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
@@ -733,6 +748,16 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
   $("#budgetRows").innerHTML = BUDGET.map(r => `<tr><td>${esc(r[0])}</td><td class="r">${r[1]||"—"}</td><td class="r">£${r[2].toLocaleString("en-GB")}</td></tr>`).join("")
    + `<tr class="tot"><td>Total per person</td><td class="r"></td><td class="r">£${total.toLocaleString("en-GB")}</td></tr>`
    + `<tr><td style="color:var(--muted)">Still to spend after flights</td><td class="r"></td><td class="r" style="color:var(--muted)">£${(total-578).toLocaleString("en-GB")}</td></tr>`;
+})();
+
+(function(){
+  const f = n => "£" + (Math.round(n*100)/100).toLocaleString("en-GB",{minimumFractionDigits: n%1 ? 2 : 0, maximumFractionDigits:2});
+  const tot = BOOKED.reduce((a,r)=>a+r[1],0);
+  const stays = BOOKED.filter(r=>r[2]==="stay"), stayEach = stays.reduce((a,r)=>a+r[1],0)/2, nights = stays.reduce((a,r)=>a+(r[3]||0),0);
+  const left = STAY_BUDGET_EACH - stayEach, nightsLeft = STAY_NIGHTS - nights;
+  $("#bookedRows").innerHTML = BOOKED.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${f(r[1])}</td><td class="r">${f(r[1]/2)}</td></tr>`).join("")
+   + `<tr class="tot"><td>Paid so far</td><td class="r">${f(tot)}</td><td class="r">${f(tot/2)}</td></tr>`
+   + `<tr><td colspan="3" style="color:var(--muted)">Accommodation: ${nights} of ${STAY_NIGHTS} nights booked, ${f(stayEach)} each against a ${f(STAY_BUDGET_EACH)} budget. ${f(left)} each left for the other ${nightsLeft} nights (~${f(left/nightsLeft)} each a night).</td></tr>`;
 })();
 
 /* ======================= GUIDE ======================= */
