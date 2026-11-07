@@ -38,6 +38,8 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 .leaflet-popup-content{font-size:13.5px;margin:10px 12px}
 .leaflet-popup-content b{font-size:14.5px}
 .pd{color:#666;font-size:12px}
+.mapnav{font-size:13px;margin-bottom:4px}.mapnav a{text-decoration:none}
+details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;font-weight:700}
 .offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
 @media (max-width:760px){
  .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
@@ -49,21 +51,23 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 <body>
 <div class="app">
  <aside class="panel">
-  <a class="back" href="./">← Back to the itinerary</a>
+  <nav class="mapnav"><a href="./" target="_top">← Itinerary</a> · <a href="tokyo-map.html" target="_top">Tokyo</a> · <a href="hakone-map.html" target="_top">Hakone</a> · <a href="kyoto-map.html" target="_top">Kyoto</a> · <a href="osaka-map.html" target="_top">Osaka</a></nav>
   <h1>Kyoto: where everything is</h1>
-  <p class="sub">Every Kyoto stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+  <p class="sub">Every Kyoto stop, coloured and numbered by day, on satellite. <b>★</b> is where we're staying. Tap a pin for the time and a Google Maps link.</p>
 
   <h2>Show days</h2>
   <div class="chips" id="dayChips"></div>
 
   <h2>Where we're staying</h2>
-  <p class="sub" style="margin:0">★ <b>Kyoto Birch House Spring</b>, by Tofukuji station (booked). JR: Kyoto Station 1 stop, Fushimi Inari 1 stop, Uji and Nara on the same line. Keihan: Gion-Shijo ~6 min.</p>
+  <p class="sub" style="margin:0 0 6px">★ <b>Kyoto Birch House Spring</b>, by Tofukuji station, 5 nights (Mon 15 – Sat 20). <a href="#" id="toBase">Show on map</a></p>
+  <ul class="offmap"><li>Kyoto Station (shinkansen, Hiroshima, Nara, Uji): JR Nara line 1 stop, 3 min</li><li>Fushimi Inari: JR 1 stop the other way</li><li>Gion, Nishiki, Kiyomizu: Keihan line to Gion-Shijo or Kiyomizu-Gojo, ~6 min</li><li>Arashiyama: JR to Kyoto, then JR San-in line, ~25 min</li><li>Kiyomizu-dera at dawn: taxi ~10 min, ~¥1,200</li></ul>
 
-  <h2>Areas we compared</h2>
+  <details class="cmp" id="cmp"><summary>Areas we compared (before booking)</summary>
   <div id="zones"></div>
+  </details>
 
   <h2>Not on this map</h2>
-  <ul class="offmap"><li>Hakone (Day 9 morning): the shinkansen arrives at Kyoto Station, pinned.</li><li>Hiroshima & Miyajima (Day 10): from Kyoto Station, ~1h40.</li><li>Uji and the Nintendo Museum (Day 11) are pinned south of the city; zoom out to see them.</li></ul>
+  <ul class="offmap"><li>Hakone (Day 9 morning): the shinkansen arrives at Kyoto Station, pinned.</li><li>Hiroshima & Miyajima (Day 10): Nozomi from Kyoto Station (pinned), ~1h40.</li><li>Uji and the Nintendo Museum (Day 11) are pinned south of the city; zoom out to see them.</li></ul>
 
   <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. Travel times are typical door-to-door by train in the morning.</p>
  </aside>
@@ -74,6 +78,7 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 <script>
 const DAYS = {
  9:{label:"Day 9 · Mon 15",title:"Arrive, Nishiki & Gion",c:"#E5484D"},
+ 10:{label:"Day 10 · Tue 16",title:"Leave for Hiroshima & Miyajima",c:"#F76B15"},
  11:{label:"Day 11 · Wed 17",title:"Nintendo Museum, Uji, Fushimi Inari",c:"#30A46C"},
  12:{label:"Day 12 · Thu 18",title:"Higashiyama at dawn",c:"#FFC53D"},
  13:{label:"Day 13 · Fri 19",title:"Arashiyama & north-west temples",c:"#00A2C7"},
@@ -81,10 +86,12 @@ const DAYS = {
 };
 const STOPS = [
  [9,"15:45","Kyoto Station (arrive by shinkansen)",34.9858,135.7588,"Kyoto Station"],
- [9,"16:30","Nishiki Market",35.0050,135.7649],
- [9,"17:15","Teramachi & Pokémon Center Kyoto (Takashimaya)",35.0036,135.7690,"Pokemon Center Kyoto"],
+ [9,"16:15","Check in: Birch House (near Tofukuji)",34.9806,135.7697,"Tofukuji Station"],
+ [9,"16:45","Nishiki Market",35.0050,135.7649],
+ [9,"17:20","Teramachi & Pokémon Center Kyoto (Takashimaya)",35.0036,135.7690,"Pokemon Center Kyoto"],
  [9,"18:00","Yasaka Shrine & Shirakawa, Gion",35.0063,135.7745,"Shirakawa Gion"],
  [9,"19:30","Pontocho dinner",35.0055,135.7710,"Pontocho"],
+ [10,"07:00","Kyoto Station: Nozomi to Hiroshima",34.9858,135.7588,"Kyoto Station"],
  [11,"09:45","Nintendo Museum (Ogura, Uji)",34.9066,135.7940,"Nintendo Museum Uji"],
  [11,"13:15","Lunch: Nakamura Tokichi",34.8905,135.8027,"Nakamura Tokichi Honten"],
  [11,"14:15","Byodo-in",34.8893,135.8077],
@@ -110,7 +117,7 @@ const STOPS = [
  [13,"15:15","Kinkaku-ji",35.0394,135.7292],
  [13,"16:30","Kitano Tenmangu",35.0312,135.7351],
  [13,"18:30","Kyoto Station Skyway & Ramen Street",34.9852,135.7585,"Kyoto Station Building"],
- [14,"07:15","Kintetsu Kyoto (train to Nara)",34.9849,135.7581,"Kintetsu Kyoto Station"]
+ [14,"07:00","Kintetsu Kyoto (train to Nara)",34.9849,135.7581,"Kintetsu Kyoto Station"]
 ];
 const ZONES = [
  {id:"station",name:"Kyoto Station (north side)",tag:["best","Best fit"],lat:34.9880,lng:135.7590,r:700,
@@ -134,11 +141,11 @@ L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{
 const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Kyoto");
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const zoneLayers = {};
+const zoneLayers = {}; const zoneGroup = L.layerGroup();
 ZONES.forEach(z=>{
   const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
   zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
-    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(zoneGroup);
 });
 
 const dayLayers = {};
@@ -177,6 +184,8 @@ ZONES.forEach(z=>{
 });
 
 map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+document.getElementById("cmp").addEventListener("toggle",e=>{e.target.open?zoneGroup.addTo(map):map.removeLayer(zoneGroup);});
+document.getElementById("toBase").addEventListener("click",e=>{e.preventDefault();map.flyTo([34.9806, 135.7697],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});});
 // our booked base (pinned at the station, not the door)
 L.marker([34.9806,135.7697],{icon:L.divIcon({className:"",html:'<div class="pin" style="background:#111;width:32px;height:32px;line-height:28px;font-size:16px">★</div>',iconSize:[32,32],iconAnchor:[16,16]}),zIndexOffset:1000,title:"Our house"})
  .bindPopup('<b>Our base: Kyoto Birch House Spring</b><br><span class="pd">Booked, Mon 15 – Sat 20 Mar. Pinned at Tofukuji station (JR Nara line & Keihan); the exact address is in the Airbnb app.</span>').addTo(map);

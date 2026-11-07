@@ -117,6 +117,18 @@ p{margin:0 0 10px}
 .leg + .stop{border-top:0}
 .stop.opt .h::after{content:"optional";font-size:11px;font-weight:500;background:var(--soft);color:var(--muted);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
 
+/* ---------- stays & maps ---------- */
+.box.stay{border-left:5px solid var(--c)}
+.stay h3{margin:0 0 2px;font-size:20px}
+.stay .when{color:var(--muted);font-size:14px;margin:0 0 12px}
+.stay .kv{margin:0 0 12px}
+.stay h4{margin:14px 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stay ul.plain{margin:0;padding-left:20px}.stay ul.plain li{margin:0 0 4px}
+.msg{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;white-space:pre-wrap;margin:0 0 8px}
+.copy{border:1px solid var(--rule);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;cursor:pointer}
+.stay .acts{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;font-size:15px}
+.mapframe{border:1px solid var(--rule);border-radius:12px;overflow:hidden;height:70vh;min-height:420px;margin:0 0 10px;background:#0b1a2a}
+.mapframe iframe{width:100%;height:100%;border:0;display:block}
 /* ---------- generic blocks ---------- */
 .box{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;margin:0 0 14px}
 table{width:100%;border-collapse:collapse;font-size:15px}
@@ -194,7 +206,9 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
 <div class="tabs" role="tablist" aria-label="Sections">
   <div class="wrap">
     <button class="tab" role="tab" aria-selected="true" data-tab="itinerary">Itinerary</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="maps">Maps</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="flights">Flights</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="stays">Airbnbs</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="tobook">To book</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="budget">Budget</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="guide">Guide</button>
@@ -209,6 +223,22 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
     <div class="filters" id="filters" aria-label="Show city"></div>
     <div class="tools"><button class="linkbtn" id="openAll">Open all days</button><button class="linkbtn" id="closeAll">Close all</button></div>
     <div id="itin"></div>
+  </section>
+
+  <!-- MAPS -->
+  <section class="panel" id="p-maps" role="tabpanel" hidden>
+    <h2>Maps</h2>
+    <p class="lede">Every stop on satellite, numbered by day, with ★ where we're staying. Pins are placed by hand, so use each pin's Google Maps link for the exact door.</p>
+    <div class="filters" id="mapPick"></div>
+    <div class="mapframe"><iframe id="mapFrame" title="Trip map" loading="lazy"></iframe></div>
+    <p><a id="mapFull" href="tokyo-map.html">Open this map full screen →</a></p>
+  </section>
+
+  <!-- STAYS -->
+  <section class="panel" id="p-stays" role="tabpanel" hidden>
+    <h2>Airbnbs</h2>
+    <p class="lede">All four stays are booked on Airbnb. Exact addresses, door codes and booking references are in the Airbnb app, not on this page. Ticks are saved on this device only.</p>
+    <div id="stays"></div>
   </section>
 
   <!-- FLIGHTS -->
@@ -311,7 +341,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
 /* ======================= DATA ======================= */
 const CITY = {
   tokyo:{name:"Tokyo",code:"TK",c:"var(--tokyo)",nights:"6 nights · Mon 8 – Sun 14 Mar · booked: Shinjuku Warm House, Higashi-Shinjuku",map:"tokyo-map.html"},
-  hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · booked: FUMI, forest house with private outdoor bath"},
+  hakone:{name:"Hakone",code:"HK",c:"var(--hakone)",nights:"1 night · Sun 14 – Mon 15 Mar · booked: FUMI, forest house with private outdoor bath",map:"hakone-map.html"},
   kyoto:{name:"Kyoto",code:"KY",c:"var(--kyoto)",nights:"5 nights · Mon 15 – Sat 20 Mar · booked: Kyoto Birch House Spring, Tofukuji",map:"kyoto-map.html"},
   osaka:{name:"Osaka",code:"OS",c:"var(--osaka)",nights:"4 nights · Sat 20 – Wed 24 Mar · booked: FDS Aura, Nagahoribashi",map:"osaka-map.html"}
 };
@@ -644,6 +674,55 @@ const GUIDE = [
  ["What's on while we're there",`<ul><li><b>Grand Sumo</b>, Osaka: mid-March to 28 March. We go Sun 21.</li><li><b>Plum blossom</b>: Yushima Tenjin, Kitano Tenmangu, Osaka Castle.</li><li><b>Mon 22 March</b>: national holiday.</li><li><b>USJ Cool Japan</b> incl. Sailor Moon ride, to 5 April.</li><li><b>Higashiyama Hanatoro</b> lantern walk (Kyoto): usually early to mid-March. Check dates in February; if it overlaps 15–19 March, use it on Day 12 night.</li><li>Main cherry blossom usually starts ~20–24 March in Tokyo, ~24–27 in Osaka. We may catch the first trees at the very end.</li></ul>`],
 ];
 
+const STAYS = [
+ {city:"tokyo", name:"Shinjuku Warm House", dates:"Mon 8 – Sun 14 March", nights:6, price:739,
+  listing:"https://www.airbnb.co.uk/rooms/792640166646534295", map:"tokyo-map.html",
+  kv:[["Check-in","From 15:00. Self check-in with a keypad; the code comes from the host in the Airbnb app."],
+      ["Check-out","By 10:00. We leave at 06:30 on Day 8 for Tsukiji."],
+      ["Rooms","2 bedrooms, each with a small double bed. 2 bathrooms."],
+      ["Has","Lift, wifi, workspace, paid washing machine."],
+      ["Nearest","Higashi-Shinjuku station (Oedo & Fukutoshin lines), a few minutes' walk. Shinjuku station ~15 min on foot."],
+      ["Getting there","Day 2: Narita Express to Shinjuku (~80 min), then Oedo line 1 stop or a ~¥1,200 taxi with the cases."],
+      ["Licence","Hotels and Inns Business Act, Shinjuku public health centre."]],
+  todo:["Send passport details if the host asks","Ask the host for the nearest convenience store that does Yamato (for sending cases to Kyoto on the night of Sat 13)","Day 7 night: send cases to the Kyoto address; pack an overnight bag for Hakone"],
+  msg:"Hi! We're two adults arriving from Narita around 16:30 on 8 March. On the evening of 13 March we'll send our suitcases on to Kyoto by Yamato. Is there a convenience store nearby you'd recommend for that? We'll check out early, around 06:30 on 14 March; is there anything we need to do with the key? Thank you!"},
+ {city:"hakone", name:"FUMI", dates:"Sun 14 – Mon 15 March", nights:1, price:274,
+  listing:"https://www.airbnb.co.uk/rooms/1397047730899201876", map:"hakone-map.html",
+  kv:[["Check-in","From 15:00. Self check-in with a smart lock. We arrive ~17:00 after the ropeway."],
+      ["Check-out","By 11:00. We leave ~08:45 for the 09:30 pirate ship."],
+      ["Rooms","3 bedrooms: 2 single beds, 2 futons, 2 single beds."],
+      ["Has","Private outdoor cypress (hinoki) bath in the forest, kitchen, wifi."],
+      ["Getting there","Bus from Togendai to the nearest stop, then a steep 10-min walk uphill. The stop name is in the booking."],
+      ["Licence","Hotels and Inns Business Act, Odawara public health office."]],
+  todo:["Ask the host which bus stop to use from Togendai","Ask whether the bath is hot-spring water","Buy dinner and breakfast in Gora at lunchtime on Day 8"],
+  msg:"Hi! We're two adults arriving around 17:00 on 14 March, coming by bus from Togendai after the ropeway. Which bus stop should we use, and is there a shop near it for dinner supplies? Is the outdoor bath filled with hot-spring water? We'll leave around 08:45 the next morning. Thank you!"},
+ {city:"kyoto", name:"Kyoto Birch House Spring", dates:"Mon 15 – Sat 20 March", nights:5, price:514,
+  listing:"https://www.airbnb.co.uk/rooms/785758994594113394", map:"kyoto-map.html",
+  kv:[["Check-in","Time is in the booking confirmation (not shown on the listing). We arrive ~16:15."],
+      ["Check-out","We leave ~07:00 on Day 14 for Nara. Late check-out is charged ¥1,000 per 10 min."],
+      ["Rooms","2 bedrooms: 3 single beds in one, 2 futons in the other. 1.5 bathrooms."],
+      ["Has","Kitchen, free washing machine, fast wifi, 42-inch TV."],
+      ["Nearest","Tofukuji station, 4 min: JR Nara line (Kyoto Station 1 stop, Fushimi Inari 1 stop) and Keihan (Gion-Shijo ~6 min)."],
+      ["Getting there","Day 9: shinkansen to Kyoto Station, JR Nara line 1 stop to Tofukuji."],
+      ["Rules","Passport photos for both of us after booking (Kyoto law). ¥400 per person per night city tax, already included. Lost key ¥10,000. No smoking (¥30,000)."],
+      ["Cancellation","Free before 13 February."],
+      ["Licence","Hotels and Inns Business Act, Kyoto City."]],
+  todo:["Send passport photos for both of us","Ask the host to make up the futons in the second bedroom","Ask whether they can receive our cases from Tokyo (or book an evening Yamato slot on Mon 15)","Ask for the nearest Yamato convenience store (sending cases to Osaka, Fri 19)","Check how to return the key at ~07:00 on Sat 20"],
+  msg:"Hi Akane, we're looking forward to staying! We're two adults and will use both bedrooms, so could you prepare the futons in the second room too? We expect to arrive around 16:15 on 15 March.\n\nWe're sending our suitcases from Tokyo by Yamato on 13 March. Could someone receive them, or would you prefer we book an evening delivery on the 15th? We'll also send them on to Osaka on 19 March; where is the nearest convenience store that handles Yamato?\n\nFinally, we'll leave early on 20 March (around 7:00). How should we return the key? Thank you!"},
+ {city:"osaka", name:"FDS Aura", dates:"Sat 20 – Wed 24 March", nights:4, price:340,
+  listing:"https://www.airbnb.co.uk/rooms/1533866665372578361", map:"osaka-map.html",
+  kv:[["Check-in","From 16:00. Self check-in with a lockbox; no reception on site."],
+      ["Check-out","By 10:00. On Day 18 we check out 09:30 and put the cases in lockers at Nankai Namba."],
+      ["Rooms","2-bed apartment: 2 bedrooms, a king bed in each. 1 bathroom."],
+      ["Has","Lift, kitchen, washing machine, wifi."],
+      ["Nearest","Nagahoribashi station (Sakaisuji & Nagahori lines), 7 min. Shinsaibashi and Nippombashi 1 stop each."],
+      ["Getting there","Day 14: Kintetsu from Nara to Nippombashi, Shinsaibashi in the afternoon, then walk or 1 stop to Nagahoribashi."],
+      ["Cancellation","Free before 15 March."],
+      ["Licence","Osaka City special-zone licence."]],
+  todo:["Send passport details if the host asks","Ask whether they can receive our cases from Kyoto (or book an evening Yamato slot on Sat 20)","Day 17 night: pack for home"],
+  msg:"Hi! We're two adults arriving around 16:00 on 20 March. We're sending our suitcases from Kyoto by Yamato on 19 March. Could someone receive them, or should we book an evening delivery on the 20th? We'll check out by 10:00 on 24 March. Thank you!"}
+];
+
 /* ======================= HELPERS ======================= */
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -765,6 +844,41 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
   $("#bookedRows").innerHTML = BOOKED.map(r=>`<tr><td>${esc(r[0])}</td><td class="r">${f(r[1])}</td><td class="r">${f(r[1]/2)}</td></tr>`).join("")
    + `<tr class="tot"><td>Paid so far</td><td class="r">${f(tot)}</td><td class="r">${f(tot/2)}</td></tr>`
    + `<tr><td colspan="3" style="color:var(--muted)">${nightsLeft<=0 ? `All ${STAY_NIGHTS} nights booked: ${f(stayEach)} each for accommodation (~${f(stayEach/STAY_NIGHTS)} each a night).` : `Accommodation: ${nights} of ${STAY_NIGHTS} nights booked, ${f(stayEach)} each against a ${f(STAY_BUDGET_EACH)} budget. ${f(left)} each left for the other ${nightsLeft} nights (~${f(left/nightsLeft)} each a night).`}</td></tr>`;
+})();
+
+/* ======================= STAYS ======================= */
+(function(){
+  const st = store.get("jp27-stay", {});
+  const cityName = {tokyo:"Tokyo",hakone:"Hakone",kyoto:"Kyoto",osaka:"Osaka"};
+  $("#stays").innerHTML = STAYS.map((x,si)=>`<article class="box stay" style="--c:var(--${x.city})">
+    <h3>${esc(cityName[x.city])}: ${esc(x.name)}</h3>
+    <p class="when">${esc(x.dates)} · ${x.nights} night${x.nights>1?"s":""} · £${x.price} total, £${(x.price/2).toFixed(2).replace(/\.00$/,"")} each (~£${Math.round(x.price/2/x.nights)} each a night)</p>
+    <dl class="kv">${x.kv.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
+    <h4>To do</h4>
+    <ul class="checklist">${x.todo.map((t,i)=>{const k=si+"-"+i;return `<li><label><input type="checkbox" data-k="${k}" ${st[k]?"checked":""}><span>${esc(t)}</span></label></li>`}).join("")}</ul>
+    <h4>Message for the host</h4>
+    <div class="msg" id="msg${si}">${esc(x.msg)}</div>
+    <button class="copy" data-m="${si}">Copy message</button>
+    <div class="acts"><a href="${x.listing}" target="_blank" rel="noopener">Listing on Airbnb</a><a href="${x.map}">Map of this city</a></div>
+  </article>`).join("");
+  $("#stays").addEventListener("change", e=>{const k=e.target.dataset.k; if(!k) return; st[k]=e.target.checked; store.set("jp27-stay", st);});
+  $("#stays").addEventListener("click", async e=>{const b=e.target.closest(".copy"); if(!b) return; const txt=STAYS[+b.dataset.m].msg;
+    try{ await navigator.clipboard.writeText(txt); b.textContent="Copied"; }catch(err){ const r=document.createRange(); r.selectNodeContents($("#msg"+b.dataset.m)); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent="Selected: copy it"; }
+    setTimeout(()=>b.textContent="Copy message",2500); });
+})();
+
+/* ======================= MAPS ======================= */
+(function(){
+  const M=[["tokyo","Tokyo"],["hakone","Hakone"],["kyoto","Kyoto"],["osaka","Osaka"]];
+  let cur=store.get("jp27-map","tokyo"), loaded=false;
+  const pick=$("#mapPick");
+  const draw=()=>{ pick.innerHTML=M.map(([k,n])=>`<button class="chip${k===cur?" on":""}" data-m="${k}" style="--c:var(--${k})" aria-pressed="${k===cur}">${n}</button>`).join(""); $("#mapFull").href=cur+"-map.html"; };
+  const load=()=>{ $("#mapFrame").src=cur+"-map.html"; loaded=true; };
+  pick.addEventListener("click",e=>{const b=e.target.closest("[data-m]"); if(!b) return; cur=b.dataset.m; store.set("jp27-map",cur); draw(); load();});
+  draw();
+  const tab=document.querySelector('.tab[data-tab="maps"]');
+  tab.addEventListener("click",()=>{ if(!loaded) load(); });
+  if(!$("#p-maps").hidden) load();
 })();
 
 /* ======================= GUIDE ======================= */

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hakone Stops Map</title>
+<meta name="description" content="Satellite map of every Hakone stop on our March 2027 trip, by day, with the best areas to stay.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}}
+:root[data-theme="dark"]{--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:360px 1fr;height:100vh;height:100dvh}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--card);padding:16px}
+#map{height:100%;background:#0b1a2a}
+a{color:var(--accent)}
+.back{font-size:13px;text-decoration:none}
+h1{font-size:21px;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.zone{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;background:var(--bg)}
+.zone:hover{border-color:var(--accent)}
+.zone h3{margin:0 0 2px;font-size:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.zone h3 span{flex:none;line-height:1.5;margin-top:1px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.best{background:#DDF3E6;color:#166B3C}.ok{background:#FFF1D6;color:#8A5A00}.meh{background:#ECEDEF;color:#4A4F57}
+.zone p{margin:4px 0;font-size:13.5px}
+.zone ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:14px}
+.pin{width:26px;height:26px;border-radius:50%;border:2px solid #fff;color:#fff;font:700 12px/22px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.zlabel{background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:6px;font-weight:700;padding:3px 8px;box-shadow:none}
+.zlabel:before{display:none}
+.leaflet-popup-content{font-size:13.5px;margin:10px 12px}
+.leaflet-popup-content b{font-size:14.5px}
+.pd{color:#666;font-size:12px}
+.mapnav{font-size:13px;margin-bottom:4px}.mapnav a{text-decoration:none}
+details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;font-weight:700}
+.offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+ #map{height:62vh;order:-1}
+ .panel{border-right:0;border-top:1px solid var(--line);padding:14px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="panel">
+  <nav class="mapnav"><a href="./" target="_top">← Itinerary</a> · <a href="tokyo-map.html" target="_top">Tokyo</a> · <a href="hakone-map.html" target="_top">Hakone</a> · <a href="kyoto-map.html" target="_top">Kyoto</a> · <a href="osaka-map.html" target="_top">Osaka</a></nav>
+  <h1>Hakone: the loop</h1>
+  <p class="sub">Every Hakone stop over our one night, coloured and numbered by day, on satellite. Tap a pin for the time and a Google Maps link.</p>
+
+  <h2>Show days</h2>
+  <div class="chips" id="dayChips"></div>
+
+  <h2>Where we're staying</h2>
+  <p class="sub" style="margin:0 0 6px"><b>FUMI</b>, a forest house with a private outdoor cypress bath, Sun 14 – Mon 15. Not pinned: the address is in the Airbnb booking.</p>
+  <ul class="offmap"><li>From Togendai (end of Day 8): bus to FUMI's stop, then a steep 10-min walk uphill</li><li>Day 9: 10 min downhill to the bus, then bus to Togendai for the 09:30 ship</li><li>Buy dinner in Gora at lunch: restaurants near the stay close early</li></ul>
+
+
+  <h2>Not on this map</h2>
+  <ul class="offmap"><li>Shinjuku (Day 8 morning): Romancecar from Odakyu Shinjuku to Hakone-Yumoto, ~85 min.</li><li>Kyoto (Day 9): Hikari shinkansen from Odawara (pinned), ~2h.</li></ul>
+
+  <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door.</p>
+ </aside>
+ <div id="map" role="application" aria-label="Satellite map of Hakone stops"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const DAYS = {
+ 8:{label:"Day 8 · Sun 14",title:"Museum, Owakudani, Togendai",c:"#30A46C"},
+ 9:{label:"Day 9 · Mon 15",title:"Lake Ashi, shrine, out via Odawara",c:"#00A2C7"}
+};
+const STOPS = [
+ [8,"11:25","Hakone-Yumoto (Romancecar arrives)",35.2326,139.1053,"Hakone-Yumoto Station"],
+ [8,"12:15","Gora: quick lunch, buy dinner",35.2503,139.0467,"Gora Station"],
+ [8,"13:00","Hakone Open-Air Museum",35.2449,139.0516],
+ [8,"14:30","Sounzan (cable car → ropeway)",35.2524,139.0389,"Sounzan Station"],
+ [8,"15:00","Owakudani",35.2440,139.0198],
+ [8,"16:15","Togendai (ropeway ends, bus to FUMI)",35.2410,139.0075,"Togendai Station"],
+ [9,"09:30","Pirate ship from Togendai",35.2410,139.0075,"Togendai Port"],
+ [9,"10:10","Moto-Hakone port",35.2028,139.0263,"Moto-Hakone Port"],
+ [9,"10:30","Hakone Shrine & the lake torii",35.2049,139.0249,"Hakone Shrine"],
+ [9,"11:15","Cedar avenue & Amazake-chaya",35.1990,139.0430,"Amazake-chaya"],
+ [9,"13:30","Odawara: Hikari to Kyoto",35.2564,139.1551,"Odawara Station"]
+];
+const ZONES = [];
+const isDark = matchMedia("(prefers-color-scheme: dark)").matches;
+const map = L.map("map",{zoomControl:true}).setView([35.69,139.74],12);
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Labels © Esri"});
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+sat.addTo(map); labels.addTo(map);
+L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{collapsed:true}).addTo(map);
+
+const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Hakone");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const zoneLayers = {}; const zoneGroup = L.layerGroup();
+ZONES.forEach(z=>{
+  const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
+  zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(zoneGroup);
+});
+
+const dayLayers = {};
+Object.keys(DAYS).forEach(d=>dayLayers[d]=L.layerGroup().addTo(map));
+STOPS.forEach(([d,t,name,lat,lng,q])=>{
+  const c = DAYS[d].c;
+  const icon = L.divIcon({className:"",html:`<div class="pin" style="background:${c}">${d}</div>`,iconSize:[26,26],iconAnchor:[13,13]});
+  L.marker([lat,lng],{icon,title:name}).bindPopup(`<b>${esc(name)}</b><br><span class="pd">${esc(DAYS[d].label)} · ${esc(t)}</span><br><a href="${gm(q||name)}" target="_blank" rel="noopener">Open in Google Maps</a>`).addTo(dayLayers[d]);
+});
+// thin line per day in visiting order
+Object.keys(DAYS).forEach(d=>{
+  const pts = STOPS.filter(s=>s[0]==d && d!=4).map(s=>[s[3],s[4]]);
+  if(pts.length>1) L.polyline(pts,{color:DAYS[d].c,weight:2.5,opacity:.8}).addTo(dayLayers[d]);
+});
+
+// day chips
+const chips = document.getElementById("dayChips");
+Object.entries(DAYS).forEach(([d,info])=>{
+  const b = document.createElement("button");
+  b.className="chip"; b.setAttribute("aria-pressed","true"); b.title=info.title;
+  b.innerHTML=`<i style="background:${info.c}"></i>${esc(info.label.split(" · ")[0])} <span style="color:var(--muted)">${esc(info.title)}</span>`;
+  b.onclick=()=>{const on=b.getAttribute("aria-pressed")==="true";b.setAttribute("aria-pressed",on?"false":"true");on?map.removeLayer(dayLayers[d]):dayLayers[d].addTo(map);};
+  chips.appendChild(b);
+});
+
+// zones list with "stops within 2 km"
+const dist=(a,b,c,e)=>{const R=6371,toR=x=>x*Math.PI/180,dl=toR(c-a),dg=toR(e-b);const h=Math.sin(dl/2)**2+Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const zl=document.getElementById("zones")||document.createElement("div");
+ZONES.forEach(z=>{
+  const near = STOPS.filter(s=>dist(z.lat,z.lng,s[3],s[4])<=2).length;
+  const el=document.createElement("div"); el.className="zone"; el.tabIndex=0;
+  el.innerHTML=`<h3>${esc(z.name)}<span class="${z.tag[0]}">${esc(z.tag[1])}</span></h3><p>${esc(z.why)}</p><p><b>${near}</b> of ${STOPS.length} stops within walking distance (2 km).</p><ul>${z.pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ul>`;
+  const go=()=>{map.flyTo([z.lat,z.lng],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});};
+  el.onclick=go; el.onkeydown=e=>{if(e.key==="Enter")go();};
+  zl.appendChild(el);
+});
+
+map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+</script>
+</body>
+</html>

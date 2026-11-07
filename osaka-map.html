@@ -38,6 +38,8 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 .leaflet-popup-content{font-size:13.5px;margin:10px 12px}
 .leaflet-popup-content b{font-size:14.5px}
 .pd{color:#666;font-size:12px}
+.mapnav{font-size:13px;margin-bottom:4px}.mapnav a{text-decoration:none}
+details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;font-weight:700}
 .offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
 @media (max-width:760px){
  .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
@@ -49,21 +51,23 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 <body>
 <div class="app">
  <aside class="panel">
-  <a class="back" href="./">← Back to the itinerary</a>
+  <nav class="mapnav"><a href="./" target="_top">← Itinerary</a> · <a href="tokyo-map.html" target="_top">Tokyo</a> · <a href="hakone-map.html" target="_top">Hakone</a> · <a href="kyoto-map.html" target="_top">Kyoto</a> · <a href="osaka-map.html" target="_top">Osaka</a></nav>
   <h1>Osaka: where everything is</h1>
-  <p class="sub">Every Osaka stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+  <p class="sub">Every Osaka stop, coloured and numbered by day, on satellite. <b>★</b> is where we're staying. Tap a pin for the time and a Google Maps link.</p>
 
   <h2>Show days</h2>
   <div class="chips" id="dayChips"></div>
 
   <h2>Where we're staying</h2>
-  <p class="sub" style="margin:0">★ <b>FDS Aura</b>, near Nagahoribashi station (booked). Shinsaibashi 1 stop, Nippombashi/Kuromon 1 stop, Dotonbori walkable; Sakaisuji line straight to Tengachaya for the Rapi:t.</p>
+  <p class="sub" style="margin:0 0 6px">★ <b>FDS Aura</b>, near Nagahoribashi station, 4 nights (Sat 20 – Wed 24). <a href="#" id="toBase">Show on map</a></p>
+  <ul class="offmap"><li>Shinsaibashi: Nagahori line 1 stop, or ~10 min walk</li><li>Kuromon & Den Den Town: Sakaisuji line 1 stop to Nippombashi</li><li>Dotonbori & Namba: ~15 min on foot</li><li>Osaka Castle: via Tanimachi 6-chome, ~15 min</li><li>USJ: Nagahori line to Taisho, JR via Nishikujo, ~30 min</li><li>Kansai airport: Sakaisuji line to Tengachaya, then Rapi:t; or from Nankai Namba</li></ul>
 
-  <h2>Areas we compared</h2>
+  <details class="cmp" id="cmp"><summary>Areas we compared (before booking)</summary>
   <div id="zones"></div>
+  </details>
 
   <h2>Not on this map</h2>
-  <ul class="offmap"><li>Nara (Day 14 morning): Kintetsu arrives at Namba, pinned.</li><li>Himeji Castle and Kobe (Day 16): JR from Osaka Station, ~1h.</li><li>Kansai airport (Day 18): Rapi:t from Nankai Namba, pinned.</li></ul>
+  <ul class="offmap"><li>Nara (Day 14 morning): Kintetsu arrives at Nippombashi, pinned.</li><li>Himeji Castle and Kobe (Day 16): JR from Osaka Station, ~1h.</li><li>Kansai airport (Day 18): Rapi:t from Nankai Namba, pinned.</li></ul>
 
   <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. Travel times are typical door-to-door by train in the morning.</p>
  </aside>
@@ -80,8 +84,9 @@ const DAYS = {
  18:{label:"Day 18 · Wed 24",title:"Last morning, then KIX",c:"#00A2C7"}
 };
 const STOPS = [
- [14,"15:00","Kintetsu Namba (arrive from Nara)",34.6670,135.4999,"Osaka Namba Station"],
- [14,"16:00","Shinsaibashi-suji & Amerikamura",34.6728,135.5013,"Shinsaibashi-suji"],
+ [14,"13:45","Nippombashi (Kintetsu from Nara)",34.6661,135.5063,"Nippombashi Station"],
+ [14,"14:00","Shinsaibashi-suji & Amerikamura",34.6728,135.5013,"Shinsaibashi-suji"],
+ [14,"16:00","Check in: FDS Aura (near Nagahoribashi)",34.6747,135.5078,"Nagahoribashi Station"],
  [14,"18:00","Dotonbori & the Glico sign",34.6687,135.5013,"Dotonbori"],
  [14,"20:30","Hozenji Yokocho",34.6680,135.5034],
  [15,"09:00","Osaka Castle",34.6873,135.5262],
@@ -93,9 +98,11 @@ const STOPS = [
  [16,"16:30","Den Den Town",34.6600,135.5060,"Den Den Town Osaka"],
  [16,"19:30","Karaoke, Namba",34.6650,135.5020,"Big Echo Namba"],
  [17,"07:30","Universal Studios Japan",34.6654,135.4323],
- [18,"08:30","Breakfast at Kuromon",34.6650,135.5072,"Kuromon Market"],
- [18,"09:30","Don Quijote Dotonbori",34.6689,135.5030],
- [18,"12:45","Nankai Namba (Rapi:t to Kansai airport)",34.6626,135.5014,"Nankai Namba Station"]
+ [18,"09:30","Check out of FDS Aura",34.6747,135.5078,"Nagahoribashi Station"],
+ [18,"10:00","Cases into coin lockers, Nankai Namba",34.6626,135.5014,"Nankai Namba Station"],
+ [18,"10:15","Brunch at Kuromon",34.6650,135.5072,"Kuromon Market"],
+ [18,"11:00","Don Quijote Dotonbori",34.6689,135.5030],
+ [18,"12:45","Rapi:t to Kansai airport, Nankai Namba",34.6624,135.5016,"Nankai Namba Station"]
 ];
 const ZONES = [
  {id:"namba",name:"Namba",tag:["best","Best fit"],lat:34.6650,lng:135.5025,r:700,
@@ -119,11 +126,11 @@ L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{
 const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Osaka");
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const zoneLayers = {};
+const zoneLayers = {}; const zoneGroup = L.layerGroup();
 ZONES.forEach(z=>{
   const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
   zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
-    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(zoneGroup);
 });
 
 const dayLayers = {};
@@ -162,6 +169,8 @@ ZONES.forEach(z=>{
 });
 
 map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+document.getElementById("cmp").addEventListener("toggle",e=>{e.target.open?zoneGroup.addTo(map):map.removeLayer(zoneGroup);});
+document.getElementById("toBase").addEventListener("click",e=>{e.preventDefault();map.flyTo([34.6747, 135.5078],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});});
 // our booked base (pinned at the station, not the door)
 L.marker([34.6747,135.5078],{icon:L.divIcon({className:"",html:'<div class="pin" style="background:#111;width:32px;height:32px;line-height:28px;font-size:16px">★</div>',iconSize:[32,32],iconAnchor:[16,16]}),zIndexOffset:1000,title:"Our flat"})
  .bindPopup('<b>Our base: FDS Aura</b><br><span class="pd">Booked, Sat 20 – Wed 24 Mar. Pinned at Nagahoribashi station (Sakaisuji & Nagahori lines), ~7 min walk; the exact address is in the Airbnb app.</span>').addTo(map);

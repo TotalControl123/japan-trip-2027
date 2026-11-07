@@ -38,6 +38,8 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 .leaflet-popup-content{font-size:13.5px;margin:10px 12px}
 .leaflet-popup-content b{font-size:14.5px}
 .pd{color:#666;font-size:12px}
+.mapnav{font-size:13px;margin-bottom:4px}.mapnav a{text-decoration:none}
+details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;font-weight:700}
 .offmap{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
 @media (max-width:760px){
  .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
@@ -49,18 +51,20 @@ h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 <body>
 <div class="app">
  <aside class="panel">
-  <a class="back" href="./">← Back to the itinerary</a>
+  <nav class="mapnav"><a href="./" target="_top">← Itinerary</a> · <a href="tokyo-map.html" target="_top">Tokyo</a> · <a href="hakone-map.html" target="_top">Hakone</a> · <a href="kyoto-map.html" target="_top">Kyoto</a> · <a href="osaka-map.html" target="_top">Osaka</a></nav>
   <h1>Tokyo: where everything is</h1>
-  <p class="sub">Every Tokyo stop, coloured by day, on satellite. The shaded circles are the areas worth searching for a hotel or apartment. Tap a pin for the time and a Google Maps link.</p>
+  <p class="sub">Every Tokyo stop, coloured and numbered by day, on satellite. <b>★</b> is where we're staying. Tap a pin for the time and a Google Maps link.</p>
 
   <h2>Show days</h2>
   <div class="chips" id="dayChips"></div>
 
   <h2>Where we're staying</h2>
-  <p class="sub" style="margin:0">★ <b>Shinjuku Warm House</b>, Higashi-Shinjuku (booked). Oedo line straight to Tsukiji and to Shinjuku-nishiguchi; Shinjuku station ~15 min on foot.</p>
+  <p class="sub" style="margin:0 0 6px">★ <b>Shinjuku Warm House</b>, Higashi-Shinjuku, 6 nights (Mon 8 – Sun 14). <a href="#" id="toBase">Show on map</a></p>
+  <ul class="offmap"><li>Narita: Narita Express to Shinjuku (~80 min), then Oedo line 1 stop or a ~¥1,200 taxi</li><li>Shinjuku station: ~15 min on foot, or Oedo line 1 stop</li><li>Tsukiji (Day 8): Oedo line direct, ~20 min</li><li>Shibuya & Harajuku: Fukutoshin line direct, ~10 min</li><li>Akihabara & Ueno: Oedo line, ~20 min</li><li>DisneySea: JR from Shinjuku via Tokyo, ~50 min</li></ul>
 
-  <h2>Areas we compared</h2>
+  <details class="cmp" id="cmp"><summary>Areas we compared (before booking)</summary>
   <div id="zones"></div>
+  </details>
 
   <h2>Not on this map</h2>
   <ul class="offmap">
@@ -87,6 +91,7 @@ const DAYS = {
 };
 // [day, time, name, lat, lng, search]
 const STOPS = [
+ [2,"16:30","Check in: Shinjuku Warm House (near Higashi-Shinjuku)",35.6977,139.7075,"Higashi-Shinjuku Station"],
  [2,"17:30","Tokyo Metropolitan Govt Building (free observatory)",35.6896,139.6921],
  [2,"18:45","Omoide Yokocho",35.6929,139.6995],
  [2,"20:00","Kabukicho & the Godzilla head",35.6951,139.7019,"Godzilla Head Shinjuku"],
@@ -123,7 +128,7 @@ const STOPS = [
  [7,"07:00","Busta Shinjuku (bus to Kawaguchiko)",35.6886,139.7005,"Busta Shinjuku"],
  [7,"19:00","Fuunji tsukemen",35.6869,139.6960,"Fuunji Shinjuku"],
  [8,"07:00","Tsukiji Outer Market",35.6654,139.7707],
- [8,"10:00","Odakyu Romancecar, Shinjuku",35.6905,139.6995,"Odakyu Shinjuku Station"]
+ [8,"09:30","Odakyu Romancecar to Hakone, Shinjuku",35.6905,139.6995,"Odakyu Shinjuku Station"]
 ];
 const ZONES = [
  {id:"shinjuku",name:"Shinjuku (south & west of the station)",tag:["best","Best fit"],lat:35.6890,lng:139.6990,r:750,
@@ -148,11 +153,11 @@ L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{
 const gm = q => "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q+" Tokyo");
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const zoneLayers = {};
+const zoneLayers = {}; const zoneGroup = L.layerGroup();
 ZONES.forEach(z=>{
   const col = z.tag[0]==="best"?"#3DD68C":z.tag[0]==="ok"?"#FFC53D":"#B0B4BA";
   zoneLayers[z.id] = L.circle([z.lat,z.lng],{radius:z.r,color:col,weight:2,fillColor:col,fillOpacity:.18,dashArray:"6 6"})
-    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(map);
+    .bindTooltip(z.name.split(" (")[0],{permanent:true,direction:"center",className:"zlabel"}).addTo(zoneGroup);
 });
 
 const dayLayers = {};
@@ -191,6 +196,8 @@ ZONES.forEach(z=>{
 });
 
 map.fitBounds(L.latLngBounds(STOPS.map(s=>[s[3],s[4]])).pad(0.05));
+document.getElementById("cmp").addEventListener("toggle",e=>{e.target.open?zoneGroup.addTo(map):map.removeLayer(zoneGroup);});
+document.getElementById("toBase").addEventListener("click",e=>{e.preventDefault();map.flyTo([35.6977, 139.7075],15);if(innerWidth<=760)scrollTo({top:0,behavior:"smooth"});});
 // our booked base (pinned at the station, not the door)
 L.marker([35.6977,139.7075],{icon:L.divIcon({className:"",html:'<div class="pin" style="background:#111;width:32px;height:32px;line-height:28px;font-size:16px">★</div>',iconSize:[32,32],iconAnchor:[16,16]}),zIndexOffset:1000,title:"Our apartment"})
  .bindPopup('<b>Our base: Shinjuku Warm House</b><br><span class="pd">Booked, Mon 8 – Sun 14 Mar. Pinned at Higashi-Shinjuku station (Oedo & Fukutoshin lines); the exact address is in the Airbnb app.</span>').addTo(map);
