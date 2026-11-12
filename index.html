@@ -6,6 +6,11 @@
 <title>Japan, March 2027</title>
 <meta name="description" content="Day-by-day plan for our Japan trip: Tokyo, Hakone, Kyoto, Hiroshima and Osaka, 7–25 March 2027.">
 <meta name="theme-color" content="#13294B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Japan 2027">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -129,6 +134,20 @@ p{margin:0 0 10px}
 .stay .acts{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;font-size:15px}
 .mapframe{border:1px solid var(--rule);border-radius:12px;overflow:hidden;height:70vh;min-height:420px;margin:0 0 10px;background:#0b1a2a}
 .mapframe iframe{width:100%;height:100%;border:0;display:block}
+.stop .mp + .mp{margin-left:14px}
+.facts a{color:inherit}
+/* ---------- spending ---------- */
+.spform{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.spform label{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:500}
+.spform input,.spform select{font:inherit;font-size:16px;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:9px 10px;width:100%;min-width:0}
+.spform .row{display:grid;grid-template-columns:64px 1fr;gap:6px}
+.spform button{height:42px}
+.sprow{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;padding:10px 0;border-top:1px solid var(--rule);align-items:baseline}
+.sprow:first-child{border-top:0}
+.sprow .a{font-family:var(--num);font-size:17px;white-space:nowrap}
+.sprow .m{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.sprow button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline;padding:0}
+.offl{font-size:13px;color:var(--muted);text-align:center;padding:18px 16px 28px}
 /* ---------- generic blocks ---------- */
 .box{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;margin:0 0 14px}
 table{width:100%;border-collapse:collapse;font-size:15px}
@@ -211,6 +230,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
     <button class="tab" role="tab" aria-selected="false" data-tab="stays">Airbnbs</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="tobook">To book</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="budget">Budget</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="spend">Spending</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="guide">Guide</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="packing">Packing</button>
   </div>
@@ -272,7 +292,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
   <!-- TO BOOK -->
   <section class="panel" id="p-tobook" role="tabpanel" hidden>
     <h2>To book</h2>
-    <p class="lede">Tick things off as you go. Ticks are saved on this device only.</p>
+    <p class="lede">Tick things off as you go. Ticks are saved on this device only. <a href="booking-reminders.ics" download>Add the booking dates to your calendar</a> (one file, works on iPhone, Google and Outlook).</p>
     <div class="progress" aria-hidden="true"><i id="bookbar"></i></div>
     <ul class="checklist" id="booklist"></ul>
   </section>
@@ -318,6 +338,34 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
     </div>
   </section>
 
+  <!-- SPENDING -->
+  <section class="panel" id="p-spend" role="tabpanel" hidden>
+    <h2>Spending</h2>
+    <p class="lede">Log what we spend on the trip. It's saved on this phone only, so one of us should keep the log. Works offline.</p>
+    <div class="box">
+      <form id="spForm" class="spform" autocomplete="off">
+        <label>Amount<span class="row"><select id="spCur" aria-label="Currency"><option value="JPY">¥</option><option value="GBP">£</option></select><input id="spAmt" type="number" inputmode="decimal" min="0" step="any" required placeholder="1,200"></span></label>
+        <label>What<input id="spWhat" type="text" maxlength="60" placeholder="Ramen at Fuunji"></label>
+        <label>Type<select id="spCat"><option>Food & drink</option><option>Transport</option><option>Tickets & sights</option><option>Shopping</option><option>Other</option></select></label>
+        <label>Paid by<select id="spWho"></select></label>
+        <label>For<select id="spFor"><option value="both">Both of us (split)</option><option value="payer">Just the person who paid</option><option value="other">Just the other person</option></select></label>
+        <button class="copy" type="submit">Add</button>
+      </form>
+    </div>
+    <div class="box" id="spSummary"></div>
+    <h3>Entries</h3>
+    <div class="box"><div id="spList"></div></div>
+    <div class="box">
+      <h3 style="margin-top:0">Settings</h3>
+      <div class="spform">
+        <label>Name 1<input id="spN1" type="text" maxlength="20"></label>
+        <label>Name 2<input id="spN2" type="text" maxlength="20"></label>
+        <label>Yen per £<input id="spRate" type="number" inputmode="decimal" min="1" step="any"></label>
+      </div>
+      <p style="margin:12px 0 0;display:flex;gap:10px;flex-wrap:wrap"><button class="copy" id="spCsv" type="button">Download as CSV</button><button class="copy" id="spClear" type="button">Clear all entries</button></p>
+    </div>
+  </section>
+
   <!-- GUIDE -->
   <section class="panel" id="p-guide" role="tabpanel" hidden>
     <h2>Guide</h2>
@@ -334,6 +382,7 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
   </section>
 
 </main>
+<p class="offl" id="offl" role="status"></p>
 
 <div class="wrap"><footer>Prices and rules checked October 2026. Re-check park ticket prices, the Hakone Freepass price and the sumo schedule about a month before we go. Maps links open Google Maps.</footer></div>
 
@@ -356,17 +405,18 @@ const DAYS = [
   ["13:40","Land at Narita T1","Immigration with Visit Japan Web QR codes. Cash from the 7-Eleven ATM in arrivals."],
   "→ Narita Express to Shinjuku, ~80 min, ~¥3,250 (reserved seats at the JR desk). Then Oedo line 1 stop to Higashi-Shinjuku, or a taxi (~¥1,200) with the cases",
   ["16:30","Check in: Shinjuku Warm House","Self check-in with a keypad from 15:00; the code comes from the host in the Airbnb app. Two bedrooms, two bathrooms, lift. A few minutes' walk from Higashi-Shinjuku station.","Higashi-Shinjuku Station"],
-  "→ Walk 12 min",
+  "→ Oedo line Higashi-Shinjuku to Tochomae, 2 stops, ~5 min (or walk ~25 min)",
   ["17:30","Tokyo Metropolitan Government Building","Free observatory, 202m up, open to 22:00. Watch Tokyo light up at dusk; Fuji on a clear evening.","Tokyo Metropolitan Government Building"],
   "→ Walk 10 min",
   ["18:45","Omoide Yokocho","Yakitori bars under the tracks. Six seats a bar; just squeeze in.","Omoide Yokocho Shinjuku"],
   "→ Walk 8 min",
   ["20:00","Kabukicho","Godzilla head on the Gracery, the neon, Don Quijote.","Godzilla Head Shinjuku"],
   "→ Walk 5 min",
-  ["21:00","Golden Gai","One drink in a shoebox bar (look for no-cover signs), then first konbini haul and bed.","Golden Gai"],
+  ["21:00","Golden Gai","One drink in a shoebox bar (look for no-cover signs), then first konbini haul and a 10-min walk home.","Golden Gai"],
  ]},
  {n:3,date:"2027-03-09",city:"tokyo",title:"Shinjuku Gyoen, Harajuku, Shibuya",pace:"Full",steps:"~24,000",note:"Shibuya Sky slot: book 17:00 on 9 Feb at 12:00 Japan time. Sunset is ~17:45.",stops:[
-  ["08:00","Breakfast near the hotel","Konbini or a kissaten (old-style café) morning set."],
+  ["08:00","Breakfast near the apartment","Konbini or a kissaten (old-style café) morning set."],
+  "→ Walk ~15 min to the Shinjuku Gate",
   ["09:00","Shinjuku Gyoen","¥500, opens 09:00. Early cherries and plum in the Japanese garden. 1 hour.","Shinjuku Gyoen"],
   "→ JR Sendagaya to Harajuku, 10 min, ¥150",
   ["10:30","Meiji Jingu","Through the giant torii to the main shrine and the sake barrel wall. Free. 1 hour.","Meiji Jingu"],
@@ -383,10 +433,10 @@ const DAYS = [
   ["17:00","SHIBUYA SKY","~¥3,000. Stay through sunset into the night view (~1h15).","Shibuya Sky"],
   ["18:30","Dinner: Uobei","Conveyor sushi ordered on a touchscreen and fired at you on rails. ~¥2,000.","Uobei Shibuya Dogenzaka"],
   "→ Walk 5 min",
-  ["19:45","Nonbei Yokocho","Shibuya's tiny drinking alley. Then JR back to Shinjuku (5 min).","Nonbei Yokocho"],
+  ["19:45","Nonbei Yokocho","Shibuya's tiny drinking alley. Then Fukutoshin line Shibuya to Higashi-Shinjuku, direct, ~8 min.","Nonbei Yokocho"],
  ]},
  {n:4,date:"2027-03-10",city:"tokyo",title:"Tokyo DisneySea",pace:"Rope drop to fireworks",steps:"~30,000",note:"Quiet early-March Wednesday. Tickets ~2 months ahead. Budget 2 Premier Access (~¥5,000 each person).",stops:[
-  ["07:00","Leave Shinjuku","JR Chuo to Tokyo, JR Keiyo to Maihama, Disney Resort Line. ~50 min.","Tokyo DisneySea"],
+  ["06:50","Leave the apartment","Oedo line 1 stop (or walk 15 min) to Shinjuku, JR Chuo to Tokyo, JR Keiyo to Maihama, Disney Resort Line. ~65 min.","Tokyo DisneySea"],
   ["08:00","At the gate","Gates often open 15–30 min early. Have the app open and tickets linked."],
   ["09:00","Buy Frozen Journey Premier Access","In the app, the second you're through the gate. Then walk straight to Soaring (standby is shortest now)."],
   ["09:15","Soaring: Fantastic Flight","Mediterranean Harbor."],
@@ -397,10 +447,10 @@ const DAYS = [
   ["15:00","Tower of Terror","American Waterfront. Buy a second Premier Access here if the wait is over 60 min."],
   ["16:00","Toy Story Mania & the harbour","Then Tipo Torta and hot chocolate in Mediterranean Harbor."],
   ["18:30","Re-rides","Evenings are quietest: redo your favourite."],
-  ["19:30","Night show over the harbour","Bring a warm layer. Leave immediately after; home by ~21:30."],
+  ["19:30","Night show over the harbour","Bring a warm layer. Leave immediately after; home by ~21:45."],
  ]},
  {n:5,date:"2027-03-11",city:"tokyo",title:"Asakusa, Ueno, Yanaka & teamLab",pace:"Full, late finish",steps:"~25,000",stops:[
-  "→ JR Chuo to Kanda, Ginza line to Asakusa, ~30 min, ~¥300",
+  "→ Leave 06:25. Oedo line Higashi-Shinjuku to Kuramae, direct, ~20 min, then walk 10 min",
   ["07:00","Senso-ji","Grounds always open, empty at this hour. Kaminarimon, the lantern, incense, a fortune slip.","Senso-ji"],
   ["08:00","Asakusa breakfast & Nakamise-dori","Stalls open ~09:00: melon pan, ningyo-yaki. Sumida Park riverside for the Skytree view.","Nakamise Shopping Street"],
   "→ Walk 12 min",
@@ -419,12 +469,12 @@ const DAYS = [
   ["17:00","Ameyoko early dinner","Izakaya stalls and street food under the railway arches.","Ameyoko"],
   "→ JR Yamanote to Shimbashi, Yurikamome line to Shin-Toyosu, ~35 min",
   ["18:45","teamLab Planets","~¥3,900, timed entry (book ahead). Walk barefoot through water and mirrored rooms; wear trousers you can roll up. ~1h30. Late hours vary by season, so check when booking.","teamLab Planets Tokyo"],
-  "→ Yurikamome + JR back to Shinjuku, ~45 min",
-  ["21:00","Back to Shinjuku","Late ramen at Ichiran or Fuunji if you're hungry."],
+  "→ Yurikamome to Shiodome, then Oedo line to Higashi-Shinjuku (change at Tochomae), ~50 min",
+  ["21:15","Back at the apartment","Late ramen at Ichiran in Kabukicho if you're hungry."],
  ]},
  {n:6,date:"2027-03-12",city:"tokyo",title:"Pokémon, Akihabara & Nakano",pace:"Full · our day",steps:"~22,000",note:"Most Akihabara shops open 10:00–11:00 and Nakano's Mandarake opens at 12:00, so the order is Ikebukuro → Akiba → Nakano. Bring cash.",stops:[
-  "→ JR Yamanote Shinjuku to Ikebukuro, 6 min",
-  ["10:00","Pokémon Center MEGA TOKYO","Sunshine City, opens 10:00. The biggest in Japan, plus the Pokémon Café nearby (reservation). 1 hour.","Pokemon Center Mega Tokyo"],
+  "→ Fukutoshin line Higashi-Shinjuku to Ikebukuro, direct, ~7 min",
+  ["10:00","Pokémon Center MEGA TOKYO","Sunshine City, opens 10:00. The biggest in Japan. 1 hour. (The Pokémon Café is in Nihombashi, not here; see To book if you want it.)","Pokemon Center Mega Tokyo"],
   ["11:00","Animate Ikebukuro flagship","Anime and game goods, 9 floors. 30 min.","Animate Ikebukuro"],
   "→ JR Yamanote to Akihabara, 20 min",
   ["12:00","Lunch: Go Go Curry or Kanda Matsuya","","Go Go Curry Akihabara"],
@@ -435,10 +485,10 @@ const DAYS = [
   ["16:15","Hey! (Hirose Entertainment Yard)","Shmup and fighting-game arcade on original boards.","Hirose Entertainment Yard Akihabara"],
   "→ JR Chuo rapid Akihabara to Nakano, 20 min",
   ["17:15","Nakano Broadway","Mandarake's specialist shops (open to 20:00), Daiya for cards.","Nakano Broadway"],
-  ["19:30","Dinner in Nakano","Sun Mall's izakaya. Then JR Chuo back to Shinjuku, 5 min."],
+  ["19:30","Dinner in Nakano","Sun Mall's izakaya. Then JR Chuo to Shinjuku (5 min) and Oedo line 1 stop, or a 15-min walk home."],
  ]},
- {n:7,date:"2027-03-13",city:"tokyo",title:"Mount Fuji: Kawaguchiko",pace:"Full day trip",steps:"~20,000",note:"Book the Shinjuku–Kawaguchiko highway bus a month ahead (~¥2,200 each way). Tonight: send cases to the Kyoto hotel, pack an overnight bag for Hakone.",stops:[
-  ["07:00","Highway bus from Busta Shinjuku","~1h50 to Kawaguchiko Station. Sit on the left for Fuji.","Busta Shinjuku"],
+ {n:7,date:"2027-03-13",city:"tokyo",title:"Mount Fuji: Kawaguchiko",pace:"Full day trip",steps:"~20,000",note:"Book the Shinjuku–Kawaguchiko highway bus a month ahead (~¥2,200 each way). Tonight: send cases to the Kyoto house, pack an overnight bag for Hakone. Bad forecast? This day swaps with Day 6, which is all indoors: change the bus tickets first.",stops:[
+  ["07:00","Highway bus from Busta Shinjuku","Leave the apartment by 06:30 (20-min walk, or Oedo line to Shinjuku). ~1h50 to Kawaguchiko Station. Sit on the left for Fuji.","Busta Shinjuku"],
   "→ Fujikyu line 2 stops to Shimoyoshida, 10 min",
   ["09:15","Chureito Pagoda","398 steps up for the postcard view: five-storey pagoda with Fuji behind. Clearest air of the year in March.","Chureito Pagoda"],
   "→ Train + bus to Oshino, 30 min",
@@ -456,7 +506,7 @@ const DAYS = [
   ["06:30","Check out of the apartment","Check-out is before 10:00 and we won't be back, so leave with the overnight bag."],
   "→ Oedo line direct from Higashi-Shinjuku to Tsukijishijo, ~20 min",
   ["07:00","Tsukiji Outer Market","Breakfast crawl: tamagoyaki, tuna, uni, wagyu skewers. Some stalls close Sundays, but most are open.","Tsukiji Outer Market"],
-  "→ Oedo line back to Shinjuku, 20 min",
+  "→ Oedo line back to Shinjuku, ~25 min",
   ["09:30","Hakone Freepass + Romancecar","Odakyu counter, Shinjuku West Exit. 2-day Freepass (~¥6,500) + Romancecar seat ~¥1,200.","Odakyu Shinjuku Station"],
   ["10:00","Romancecar to Hakone-Yumoto","~85 min. Front-row seats have the driver's view. Overnight bag only; cases went to Kyoto."],
   "→ Tozan Railway up the switchbacks to Gora, 40 min",
@@ -480,13 +530,13 @@ const DAYS = [
   ["13:30","Hikari shinkansen to Kyoto","~2h, ~¥11,500. E seat for a last look at Fuji."],
   ["15:45","Kyoto Station","Change to the JR Nara line."],
   "→ JR Nara line 1 stop to Tofukuji, 3 min, then 4 min on foot",
-  ["16:15","Check in: Kyoto Birch House Spring","Self check-in. Drop the overnight bag; the cases should be waiting if the host took the delivery."],
+  ["16:15","Check in: Kyoto Birch House Spring","Self check-in; confirm the check-in time with the host beforehand. Drop the overnight bag; the cases should be waiting if the host took the delivery."],
   "→ Keihan line Tofukuji to Gion-Shijo, ~6 min, then walk 5 min",
-  ["16:45","Nishiki Market","130 stalls, most close ~18:00. Snack as you go. Aritsugu for a knife.","Nishiki Market"],
-  ["17:20","Teramachi & Shinkyogoku","Covered arcades; Pokémon Center Kyoto in Takashimaya.","Pokemon Center Kyoto"],
+  ["17:00","Nishiki Market","130 stalls, most close ~18:00, so go straight here. Snack as you go. Aritsugu for a knife.","Nishiki Market"],
+  ["17:40","Teramachi & Shinkyogoku","Covered arcades; Pokémon Center Kyoto in Takashimaya.","Pokemon Center Kyoto"],
   "→ Walk 10 min",
-  ["18:00","Yasaka Shrine & Gion at dusk","Sunset ~18:00: lanterns coming on along Hanamikoji-dori and Shirakawa.","Shirakawa Gion"],
-  ["19:30","Pontocho dinner","Lantern-lit lane by the river.","Pontocho"],
+  ["18:20","Yasaka Shrine & Gion at dusk","Just after sunset: lanterns coming on along Hanamikoji-dori and Shirakawa.","Shirakawa Gion"],
+  ["19:30","Pontocho dinner","Lantern-lit lane by the river. Home: Keihan Gion-Shijo to Tofukuji, ~6 min.","Pontocho"],
  ]},
  {n:10,date:"2027-03-16",city:"kyoto",title:"Day trip: Hiroshima & Miyajima",pace:"Full · 06:15 alarm",steps:"~22,000",note:"~3h30 of bullet train today, all reserved seats. Book SmartEX for Kyoto ⇄ Hiroshima (~¥11,500 each way). Check the Miyajima tide table: high tide for the 'floating' torii, low tide to walk out to it.",stops:[
   "→ Leave the house 06:40: JR Nara line 1 stop to Kyoto Station, 3 min",
@@ -510,11 +560,11 @@ const DAYS = [
   ["13:15","Lunch: Nakamura Tokichi","Matcha soba and matcha jelly (since 1854).","Nakamura Tokichi Honten"],
   "→ Walk 10 min",
   ["14:15","Byodo-in","¥700. Phoenix Hall from 1053, on the ¥10 coin. 1 hour.","Byodo-in"],
-  "→ JR Nara line Uji to Inari, 20 min",
+  "→ Keihan Uji line to Chushojima, ~15 min, then walk 5 min",
   ["15:45","Fushimi sake district","Gekkeikan Okura Sake Museum, ¥600 with a tasting. 45 min.","Gekkeikan Okura Sake Museum"],
-  "→ Train or taxi to Inari, 10 min",
+  "→ Keihan Chushojima to Fushimi-Inari, ~10 min",
   ["16:45","Fushimi Inari to the summit","10,000 torii, golden light, lanterns on. Yotsutsuji viewpoint at ~17:30; summit loop if you're fresh.","Fushimi Inari Taisha"],
-  ["19:00","Street food by Inari station","Then JR to Kyoto, 5 min."],
+  ["19:00","Street food by Inari station","Then 1 stop home: JR Inari or Keihan Fushimi-Inari to Tofukuji, 3 min."],
  ]},
  {n:12,date:"2027-03-18",city:"kyoto",title:"Higashiyama at dawn",pace:"Full · 05:45 alarm",steps:"~30,000",stops:[
   "→ Taxi from the house, ~10 min, ~¥1,200",
@@ -530,11 +580,13 @@ const DAYS = [
   ["13:45","Ginkaku-ji","¥500. The Silver Pavilion and its sand garden. 1 hour.","Ginkaku-ji"],
   "→ Bus or taxi, 20 min",
   ["15:30","Sanjusangen-do","1,001 golden Kannon statues in one hall. Breathtaking, 45 min. ¥600, last entry 16:30.","Sanjusangendo"],
-  ["17:30","Rest at the hotel",""],
+  "→ Keihan Shichijo to Tofukuji, 1 stop",
+  ["16:45","Rest at the house",""],
+  "→ Keihan Tofukuji to Gion-Shijo, ~6 min",
   ["19:00","Gion night walk & dinner","Hanatoro lanterns if they're on. Otherwise izakaya on Kiyamachi."],
  ]},
- {n:13,date:"2027-03-19",city:"kyoto",title:"Arashiyama & the north-west temples",pace:"Full",steps:"~26,000",note:"Tonight: send cases to the Osaka place (or carry them tomorrow).",stops:[
-  "→ JR San-in line Kyoto to Saga-Arashiyama, 15 min",
+ {n:13,date:"2027-03-19",city:"kyoto",title:"Arashiyama & the north-west temples",pace:"Full",steps:"~26,000",note:"Tonight: send cases to the Osaka flat (or carry them tomorrow). Heavy rain? See \"If it rains\" in the Guide.",stops:[
+  "→ Leave 06:50. JR 1 stop to Kyoto Station, then JR San-in line to Saga-Arashiyama, ~30 min in all",
   ["07:30","Bamboo Grove","Empty at this hour.","Arashiyama Bamboo Grove"],
   ["08:30","Tenryu-ji garden","Opens 08:30, ¥500. Back gate to the bamboo.","Tenryu-ji"],
   ["09:30","Okochi Sanso Villa","¥1,000 including matcha. The best view in Arashiyama.","Okochi Sanso"],
@@ -548,7 +600,7 @@ const DAYS = [
   ["15:15","Kinkaku-ji","The Golden Pavilion. ¥500, to 17:00.","Kinkaku-ji"],
   "→ Bus or taxi, 15 min",
   ["16:30","Kitano Tenmangu plum garden","1,500 plum trees, usually still flowering.","Kitano Tenmangu"],
-  ["18:30","Kyoto Station: Skyway & dinner","Free sky walkway on the 11th floor; Ramen Street on 10F.","Kyoto Station Building"],
+  ["18:30","Kyoto Station: Skyway & dinner","Free sky walkway on the 11th floor; Ramen Street on 10F. Then JR Nara line 1 stop home.","Kyoto Station Building"],
  ]},
  {n:14,date:"2027-03-20",city:"osaka",title:"Nara, then Osaka by night",pace:"Full · holiday weekend",steps:"~24,000",stops:[
   "→ Check out ~07:00. JR 1 stop to Kyoto Station, then Kintetsu to Kintetsu Nara, ~50 min in all",
@@ -575,10 +627,10 @@ const DAYS = [
   ["14:00","GRAND SUMO, EDION Arena","Juniors in the early afternoon, top division from ~15:45, final bout ~18:00.","EDION Arena Osaka"],
   "→ Midosuji line to Umeda, 15 min",
   ["19:00","Umeda Sky Building","Floating Garden Observatory, free with the pass, open to 22:30. Osaka at night.","Umeda Sky Building"],
-  ["20:00","Dinner in Umeda","Takimi Koji: retro Showa-era restaurant alley in the basement.","Takimi Koji"],
+  ["20:00","Dinner in Umeda","Takimi Koji: retro Showa-era restaurant alley in the basement. Home: Midosuji line to Shinsaibashi, then Nagahori line 1 stop.","Takimi Koji"],
  ]},
  {n:16,date:"2027-03-22",city:"osaka",title:"Himeji Castle, Kobe & Den Den Town",pace:"Full · national holiday",steps:"~24,000",note:"This replaces the rest day. If you're shattered, keep just the Den Den Town part.",stops:[
-  "→ JR Special Rapid Osaka to Himeji, ~1h, ~¥1,520 (or shinkansen from Shin-Osaka, 30 min)",
+  "→ Leave 07:20. Nagahori line to Shinsaibashi, Midosuji line to Umeda (~15 min). Then JR Special Rapid Osaka to Himeji, ~1h, ~¥1,520",
   ["09:00","Himeji Castle","Opens 09:00 (last entry 16:00), ¥1,000. Japan's finest original castle, all six floors of wood. Go at opening; the holiday will bring queues.","Himeji Castle"],
   ["11:00","Koko-en Garden","Nine Edo-style gardens next to the castle. ¥310.","Koko-en Garden"],
   "→ JR Special Rapid to Sannomiya (Kobe), 40 min",
@@ -587,11 +639,11 @@ const DAYS = [
   ["14:30","Nankinmachi & Kobe Harbor","Chinatown snacks, then Meriken Park and the port tower.","Meriken Park"],
   "→ Hanshin line to Osaka Namba, 40 min",
   ["16:30","Den Den Town","Super Potato Osaka, Surugaya, Mandarake Grand Chaos, Jungle. Often cheaper than Tokyo. Buy big: 2 checked bags each.","Den Den Town Osaka"],
-  ["19:30","Karaoke","Big Echo or Karaoke Kan, unlimited drinks."],
+  ["19:30","Karaoke","Big Echo or Karaoke Kan, unlimited drinks. Home is 1 stop from Nippombashi, or a 15-min walk."],
   ["22:00","Pack for home","Tonight, not after USJ. Keep tax-free purchases and receipts together."],
  ]},
  {n:17,date:"2027-03-23",city:"osaka",title:"Universal Studios Japan",pace:"Rope drop to close",steps:"~30,000",note:"Studio Pass price rises as the date sells. Express Pass must include Super Nintendo World entry.",stops:[
-  "→ Namba to Nishikujo (JR), change for Universal City, ~25 min",
+  "→ Leave 06:45. Nagahori line Nagahoribashi to Taisho, JR loop line to Nishikujo, JR Yumesaki line to Universal City, ~35 min",
   ["07:30","At the gates","Gates often open 30–60 min before the official time."],
   ["Open","Super Nintendo World first","Mario Kart, then Yoshi. Buy the Power-Up Band and start collecting keys."],
   ["10:00","Donkey Kong Country","Mine Cart Madness (use Express if included)."],
@@ -601,7 +653,7 @@ const DAYS = [
   ["14:30","Sailor Moon story ride + 4-D","Cool Japan, limited time."],
   ["16:00","Hollywood Dream (backwards version)","Then Minion Mayhem and JAWS."],
   ["18:00","Back to Nintendo World","Finish the Power-Up Band challenges; the land is lit up at night."],
-  ["20:00","Namba: late dinner","Packing was done last night, so just bed."],
+  ["20:00","Late dinner near the flat","Shinsaibashi or Dotonbori on the way back. Packing was done last night, so just bed."],
  ]},
  {n:18,date:"2027-03-24",city:"osaka",title:"Last morning, then home",pace:"Short morning",steps:"~10,000",stops:[
   ["09:30","Check out of FDS Aura","Check-out is by 10:00 and there's no reception, so take the cases."],
@@ -616,26 +668,32 @@ const DAYS = [
 ];
 
 const BOOK = [
- ["done","Flights","Air China via Shanghai. Paid.",true],
  ["Now","Travel insurance","Non-refundable fares, so get cancellation cover. Check it covers airspace disruption."],
- ["done","Osaka: FDS Aura, Sat 20 – Wed 24","Two bedrooms near Nagahoribashi. Ask the host about receiving the cases from Kyoto (no reception), or book an evening Yamato slot on Sat 20.",true],
- ["done","Hakone: FUMI, Sun 14","Forest house, 3 bedrooms, private outdoor cypress bath. Self check-in from 15:00, check-out by 11:00.",true],
- ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku. Self check-in from 15:00, check-out by 10:00.",true],
- ["done","Kyoto: Kyoto Birch House Spring, Mon 15 – Sat 20","Two bedrooms, near Tofukuji station. Send the host passport photos; message about the luggage delivery, the second bedroom's futons and the early departure on the 20th.",true],
- ["Feb","Shinkansen Kyoto ⇄ Hiroshima, Tue 16 Mar","SmartEX: 07:00 out, ~19:15 back. Seats open a month ahead."],
+ ["Now","Message the four hosts","Luggage deliveries, check-in times, the second bedroom's futons in Kyoto. Ready-to-send messages are on the Airbnbs tab."],
+ ["Now","Send passport photos to the Kyoto host","Kyoto law requires them for both of us after booking."],
  ["Now","Check CA858 seats","If it's a 3-seat row, move to a pair."],
- ["December","Nintendo Museum lottery","Enter during December for Wed 17 March. Free Nintendo Account, both full names, pick 2–3 time slots. Results 1 Jan."],
- ["Dec","Re-check hotel prices","Rebook anything cheaper. Confirm every room is a twin."],
+ ["1–31 Dec","Nintendo Museum lottery","Enter during December for Wed 17 March. Free Nintendo Account, both full names, pick 2–3 time slots. Results 1 Jan."],
  ["Early Jan","Tokyo DisneySea, Wed 10 Mar","Tickets release ~2 months ahead. Klook as fallback."],
- ["On release","USJ Studio Pass + Express, Tue 23 Mar","Price rises as the date sells. Express must include Super Nintendo World."],
+ ["From late Jan","USJ Studio Pass + Express, Tue 23 Mar","Usually on sale about two months ahead, so check from late January. Price rises as the date sells. Express must include Super Nintendo World."],
  ["6 Feb","Grand Sumo, Sun 21 Mar","sumo.or.jp on release day."],
- ["9 Feb, 12:00 JST","Shibuya Sky, Tue 9 Mar","Sunset slot, 4 weeks ahead to the minute."],
- ["Feb","Highway bus Shinjuku ⇄ Kawaguchiko, Sat 13 Mar","07:00 out, ~16:30 back. Opens a month ahead on the Fujikyu/Keio site."],
+ ["9 Feb, 03:00 UK","Shibuya Sky, Tue 9 Mar","The 17:00 sunset slot. Opens 4 weeks ahead at 12:00 Japan time, which is 03:00 in the UK."],
+ ["9 Feb, optional","Pokémon Café, Nihombashi","Only if you want it. Bookings open 31 days ahead at 18:00 Japan time (09:00 UK) and go in minutes; check the café site for the exact rules. It would replace an hour of Day 5 or Day 6."],
+ ["By 12 Feb","Kyoto: last day to cancel free","Birch House's free cancellation ends before 13 February. (Osaka's ends before 15 March.)"],
+ ["Mid Feb","Highway bus Shinjuku ⇄ Kawaguchiko, Sat 13 Mar","07:00 out, ~16:30 back. Opens a month ahead on the Fujikyu/Keio site."],
+ ["Mid Feb","Romancecar Shinjuku → Hakone-Yumoto, Sun 14 Mar","The 10:00 departure. Seats open a month ahead on Odakyu's e-Romancecar site; front-row seats go first."],
+ ["Mid Feb","Shinkansen seats: Mon 15 and Tue 16 Mar","SmartEX app, a month ahead. Odawara → Kyoto on the ~13:30 Hikari; Kyoto ⇄ Hiroshima 07:00 out, ~19:15 back."],
  ["Feb","teamLab Planets, Thu 11 Mar ~18:45","Timed tickets; book when March dates open."],
  ["Late Feb","Higashiyama Hanatoro dates","If it overlaps 15–19 March, add an evening walk."],
+ ["Late Feb","Re-check opening hours and prices","Everything here was researched in autumn 2026. Check the ropeway, pirate ship, museum hours and ticket prices against the official sites."],
  ["1 week before","Visit Japan Web","Immigration and customs QR codes, saved as screenshots."],
  ["1 week before","eSIM + Suica in phone wallet","Ubigi, Airalo or Sakura Mobile."],
+ ["1 week before","Open this site once on each phone","That saves it for offline use. Open each of the four maps too."],
  ["2 days before","Online check-in, CA848",""],
+ ["done","Flights","Air China via Shanghai. Paid.",true],
+ ["done","Tokyo: Shinjuku Warm House, Mon 8 – Sun 14","2 bedrooms, 2 bathrooms, Higashi-Shinjuku.",true],
+ ["done","Hakone: FUMI, Sun 14","Forest house with a private outdoor cypress bath.",true],
+ ["done","Kyoto: Kyoto Birch House Spring, Mon 15 – Sat 20","Two bedrooms, near Tofukuji station.",true],
+ ["done","Osaka: FDS Aura, Sat 20 – Wed 24","Two bedrooms near Nagahoribashi.",true],
 ];
 
 const PACK = [
@@ -651,6 +709,8 @@ const BOOKED = [
  ["Osaka: FDS Aura, 4 nights", 340, "stay", 4],
 ];
 const STAY_BUDGET_EACH = 933.5, STAY_NIGHTS = 16;
+const RATE = 200; // yen per pound used for the budget
+const PAID_EACH = BOOKED.reduce((a,r)=>a+r[1],0)/2;
 
 const BUDGET = [
  ["Flights (paid)",null,578],["Accommodation, 16 nights (all booked)","¥186,700",934],["Trains incl. Hiroshima, transfers, luggage forwarding","¥65,000",325],
@@ -659,15 +719,16 @@ const BUDGET = [
 ];
 
 const GUIDE = [
- ["Twin rooms & where to stay",`<ul><li>Filter for <b>Twin</b>. Never Double, Semi-double or Standard.</li><li><b>Tokyo:</b> booked, Shinjuku Warm House in Higashi-Shinjuku (see the <a href="tokyo-map.html">satellite map</a>).</li><li><b>Hakone:</b> booked, FUMI (forest house with a private outdoor bath).</li><li><b>Kyoto:</b> booked, Kyoto Birch House Spring near Tofukuji station (<a href="kyoto-map.html">map</a>).</li><li><b>Osaka:</b> booked, FDS Aura near Nagahoribashi station (<a href="osaka-map.html">map</a>).</li><li>Lodging tax at check-in: ¥100–500 per person per night.</li></ul>`],
- ["Airbnb: the rules for our dates",`<ul><li>Every legal listing shows <b>Registration details</b> under Things to know (on multi-apartment listings, open one apartment first). It looks like <i>M13…</i> (home-share), <i>Special Economic Zoning Act | 大阪市指令…</i> (Osaka special zone) or a hotel/ryokan licence (旅館業法). Nothing there, don't book.</li><li><b>Tokyo, Shinjuku:</b> home-share flats in residential streets can only take guests from Friday noon to Monday noon. We're there Mon–Sun, so only a <i>hotel-licensed</i> apartment works.</li><li><b>Kyoto:</b> residential-zone home-shares are allowed only 15 Jan – 15 Mar. We arrive on 15 March, so again hotel- or ryokan-licensed places only (machiya under a ryokan licence are fine).</li><li><b>Osaka:</b> existing special-zone flats in Namba are legal; new ones stopped being approved in May 2026, so expect fewer listings.</li><li><b>Hakone:</b> rural houses are fine. Check the bath is <i>onsen</i> water and the listing is really in Hakone.</li><li>Check for twin beds or futons for two, and a late check-in route if arriving after 17:00.</li></ul>`],
+ ["Where we're staying",`<ul><li><b>Tokyo:</b> Shinjuku Warm House, Higashi-Shinjuku (<a href="tokyo-map.html">map</a>).</li><li><b>Hakone:</b> FUMI, a forest house with a private outdoor bath (<a href="hakone-map.html">map</a>).</li><li><b>Kyoto:</b> Kyoto Birch House Spring, by Tofukuji station (<a href="kyoto-map.html">map</a>).</li><li><b>Osaka:</b> FDS Aura, near Nagahoribashi station (<a href="osaka-map.html">map</a>).</li><li>Check-in times, rooms and messages for the hosts are on the Airbnbs tab.</li><li>All four are self check-in with no front desk, so nobody holds bags before check-in: use station coin lockers.</li></ul>`],
  ["Getting around",`<ul><li><b>Don't buy a JR Pass.</b> Even with Hiroshima, our long-distance trains total ~¥49,000 across 18 days; a 7-day pass is ¥50,000 and doesn't cover the Nozomi.</li><li><b>Suica</b> in your phone wallet works on every train, bus and convenience store, including Kansai.</li><li><b>Hakone Freepass</b> from Shinjuku (2 days, ~¥6,500) + Romancecar ~¥1,200.</li><li><b>Shinkansen</b> Odawara → Kyoto and Kyoto ⇄ Hiroshima on the SmartEX app. E seat for Fuji.</li><li><b>Hakone:</b> the Freepass covers the Tozan train, cable car, ropeway, pirate ship and buses, including the bus to Odawara on Day 9.</li><li><b>Hiroshima:</b> Suica works on the trams. The JR ferry to Miyajima is ¥200 plus Miyajima's ¥100 visitor tax.</li><li><b>Osaka Amazing Pass</b> for Day 15.</li><li>Kyoto buses are slow. Walk, take the subway, or split a taxi (¥1,500–2,500).</li></ul>`],
- ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → Kyoto hotel. Overnight bag only for the one Hakone night.</li><li>Kyoto is self check-in: ask the host whether they can receive the cases, or book a Yamato delivery slot for the evening of Mon 15.</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka from a convenience store near Tofukuji (ask the host which one).</li><li>Osaka is self check-in too: ask the FDS Aura host about receiving the cases, or book a Yamato evening slot for Sat 20.</li><li>Hotels: the front desk does it. Our Tokyo apartment has no desk, so use a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
+ ["Luggage forwarding",`<ul><li><b>Day 7 night:</b> send cases Tokyo → the Kyoto house. Overnight bag only for the one Hakone night.</li><li>Kyoto is self check-in: ask the host whether they can receive the cases, or book a Yamato delivery slot for the evening of Mon 15.</li><li><b>Day 13 night:</b> send cases Kyoto → Osaka from a convenience store near Tofukuji (ask the host which one).</li><li>Osaka is self check-in too: ask the FDS Aura host about receiving the cases, or book a Yamato evening slot for Sat 20.</li><li>None of our stays has a front desk, so send from a 7-Eleven or FamilyMart counter (Yamato). ~¥2,000–2,500 per case, arrives next day. Have the destination address and the host’s phone number ready.</li><li>Coin lockers everywhere, ¥400–700.</li></ul>`],
  ["Shopping map",`<dl class="kv"><dt>Retro games</dt><dd>Super Potato (Akiba + Den Den Town), Surugaya, Mandarake, Hard-Off junk bins</dd><dt>Nintendo</dt><dd>Nintendo TOKYO (Shibuya PARCO 6F), Nintendo Museum shop, Nintendo OSAKA (Daimaru Umeda)</dd><dt>Pokémon</dt><dd>MEGA TOKYO (Ikebukuro), Shibuya PARCO, Kyoto Takashimaya, Osaka Daimaru Umeda</dd><dt>TCG</dt><dd>Hareruya 2, Yellow Submarine, Card Rush, Daiya (Nakano), Den Den Town</dd><dt>Knives</dt><dd>Kappabashi, Tsukiji, Aritsugu (Nishiki)</dd><dt>Matcha</dt><dd>Uji</dd><dt>Everything at 2am</dt><dd>Don Quijote</dd></dl><p>Browse in Akihabara, bulk-buy in Den Den Town on Day 16: often cheaper, and no carrying it across the country.</p>`],
  ["Food",`<ul><li><b>Tokyo:</b> Fuunji tsukemen, Afuri ramen, Butagumi tonkatsu, Gyukatsu Motomura, Uobei conveyor sushi, Ichiran.</li><li><b>Hakone:</b> Owakudani black eggs, soba in Gora, amazake at the teahouse.</li><li><b>Kyoto:</b> yudofu, obanzai, Katsukura tonkatsu, Nishiki street food, matcha everything in Uji.</li><li><b>Hiroshima & Miyajima:</b> Hiroshima-style okonomiyaki (layered, with noodles), grilled oysters, fried momiji manju, anago-meshi ekiben.</li><li><b>Osaka:</b> takoyaki, okonomiyaki, kushikatsu, kitsune udon, chanko nabe on sumo day.</li><li>In March: oden from convenience stores and hot canned coffee from vending machines.</li><li>Slurp. Never tip. Say <i>gochisousama deshita</i> as you leave.</li></ul>`],
  ["Money",`<ul><li>Cards widely accepted; carry ¥10,000–20,000 cash for small places and temples.</li><li>Always pay in <b>yen</b>, never GBP.</li><li>7-Eleven and Japan Post ATMs take foreign cards. Don't buy yen in the UK.</li><li>No tipping.</li></ul>`],
  ["Tax-free shopping (new refund system)",`<ul><li>Pay the full price, show your passport, claim the 10% back at <b>Kansai</b> when we leave.</li><li>Keep every receipt together, from Tokyo onwards.</li><li>Every item on a receipt must be with you at the airport, or that receipt's refund is void.</li><li>¥5,000 minimum per shop per day. Allow an extra 45–60 minutes at KIX.</li><li>Knives in checked bags only.</li></ul>`],
  ["Hiroshima & Miyajima",`<ul><li><b>Tides:</b> check a Miyajima tide table. High tide and the torii floats; low tide and you can walk out to it. Either is good; mid-afternoon high tide is ideal.</li><li><b>Peace Museum:</b> quiet and confronting. Allow the full 1h30; the main hall is the core.</li><li><b>Deer:</b> feeding them is banned on Miyajima (unlike Nara). They will still eat your map.</li><li>The ropeway stops early (~16:00 last up in March). If you miss it, Daisho-in is free and just as memorable.</li></ul>`],
+ ["If it rains",`<ul><li><b>Fuji day (Day 7):</b> it's only worth going if the mountain is visible. Check the forecast on Day 5: Day 6 is all indoors, so the two swap (change the bus tickets first). If both days are bad, stay in Tokyo: teamLab Borderless at Azabudai Hills, Odaiba (Miraikan, the Gundam, Joypolis arcade), or a second Akihabara and Nakano round.</li><li><b>Tokyo generally:</b> Day 3's Shibuya half is mostly indoors; do Gyoen and Meiji Jingu on whichever morning is dry.</li><li><b>Hakone (Day 8):</b> the ropeway stops in high wind or when volcanic gas is high, and a replacement bus runs. Swap Owakudani for the Pola Museum of Art or the Okada Museum; the Open-Air Museum has indoor galleries.</li><li><b>Hiroshima day:</b> the museum is indoors and Miyajima still works under an umbrella. Skip the ropeway in cloud.</li><li><b>Kyoto:</b> the bamboo grove and Fushimi Inari are good in light rain. In heavy rain swap Arashiyama for Nijo Castle, the Kyoto Railway Museum, the Manga Museum and Nishiki's covered arcades.</li><li><b>Nara:</b> Todai-ji's hall is indoors; the deer don't mind.</li><li><b>Osaka:</b> Kaiyukan aquarium, the Cup Noodles Museum in Ikeda, Round1 Stadium, and the covered arcades from Shinsaibashi to Namba. USJ runs in rain and queues are shorter.</li><li>Every convenience store sells a ¥700 clear umbrella.</li></ul>`],
+ ["Using this site offline",`<ul><li>After you've opened the site once with signal, the itinerary, lists, guide and Airbnb details all work with no connection.</li><li>Maps: open each of the four maps once and zoom into the areas you care about. The areas you've looked at are saved; areas you haven't will be blank offline.</li><li>"Map" and "Directions" links open Google Maps, which needs data. In Google Maps you can also download each city as an offline area.</li><li>On iPhone: Share → Add to Home Screen. On Android: menu → Add to Home screen. It then opens like an app.</li><li>Ticks and the spending log live on each phone separately; they don't sync between us.</li></ul>`],
  ["Private onsen tips",`<ul><li>Shower and rinse before getting in; the bath is for soaking, not washing.</li><li>It’s hot (~40–42°C). Ten minutes at a time, drink water, no soaking straight after drinking.</li><li>With a private bath there’s no etiquette worry about tattoos or swimwear.</li></ul>`],
  ["If something goes wrong",`<ul><li><b>110</b> police, <b>119</b> ambulance and fire.</li><li><b>Japan Visitor Hotline</b> (JNTO, 24h, English): 050-3816-2787.</li><li>Install the <b>Safety tips</b> app for earthquake and weather alerts in English.</li><li>Lost something? Every station and police box (koban) has a lost-property log; things really do come back.</li><li>Keep the travel insurance emergency number in your phone notes.</li></ul>`],
  ["Etiquette & five words",`<ul><li>Stand left on escalators in Tokyo, right in Osaka.</li><li>No phone calls on trains. Don't eat while walking. Take rubbish with you.</li><li>Shoes off at raised entryways.</li></ul><dl class="kv"><dt>sumimasen</dt><dd>excuse me / sorry</dd><dt>arigatou gozaimasu</dt><dd>thank you</dd><dt>onegaishimasu</dt><dd>please</dd><dt>daijoubu</dt><dd>it's fine / no thanks</dd><dt>oishii</dt><dd>delicious</dd></dl>`],
@@ -732,6 +793,31 @@ const store = {
 };
 const fmtDate = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
 const mapUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+// Where each day starts from (nearest station to that night's stay). Day 9 starts at FUMI, whose address is only in the booking.
+const HOME = {tokyo:"Higashi-Shinjuku Station, Tokyo", kyoto:"Tofukuji Station, Kyoto", osaka:"Nagahoribashi Station, Osaka"};
+const dayHome = d => d.n>=3 && d.n<=8 ? HOME.tokyo : d.n>=10 && d.n<=14 ? HOME.kyoto : d.n>=15 ? HOME.osaka : null;
+const dirUrl = (from, to) => "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(from) + "&destination=" + encodeURIComponent(to) + "&travelmode=transit";
+function dayRouteUrl(d){
+  const pts = d.stops.filter(s => typeof s !== "string" && s[3]).map(s => s[3]);
+  const home = dayHome(d); if (home && pts[0] !== home) pts.unshift(home);
+  if (pts.length < 2) return null;
+  let mid = pts.slice(1,-1);
+  if (mid.length > 9){ const step = mid.length/9; mid = Array.from({length:9}, (_,i) => mid[Math.floor(i*step)]); }
+  return "https://www.google.com/maps/dir/?api=1&origin=" + encodeURIComponent(pts[0]) + "&destination=" + encodeURIComponent(pts[pts.length-1]) + (mid.length ? "&waypoints=" + mid.map(encodeURIComponent).join("%7C") : "");
+}
+function stopsHtml(d){
+  let prev = dayHome(d);
+  return d.stops.map(s => {
+    if (typeof s === "string") return `<li class="leg"><span></span><span>${esc(s.replace(/^→\s*/,""))}</span></li>`;
+    let links = "";
+    if (s[3]){
+      links = `<a class="mp" href="${mapUrl(s[3])}" target="_blank" rel="noopener">Map</a>`;
+      if (prev && prev !== s[3]) links += `<a class="mp" href="${dirUrl(prev, s[3])}" target="_blank" rel="noopener">Directions</a>`;
+      prev = s[3];
+    }
+    return `<li class="stop${s[4]?' opt':''}"><span class="tm">${esc(s[0])}</span><div><div class="h">${esc(s[1])}</div>${s[2]?`<div class="x">${esc(s[2])}</div>`:""}${links}</div></li>`;
+  }).join("");
+}
 const japanToday = () => new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo"}).format(new Date());
 
 /* ======================= COUNTDOWN ======================= */
@@ -771,9 +857,9 @@ function renderItin(){
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="day-body" id="body-${d.n}">
-          <div class="facts"><span>Pace <b>${esc(d.pace)}</b></span><span>Steps <b>${esc(d.steps)}</b></span></div>
+          <div class="facts"><span>Pace <b>${esc(d.pace)}</b></span><span>Steps <b>${esc(d.steps)}</b></span>${dayRouteUrl(d)?`<a href="${dayRouteUrl(d)}" target="_blank" rel="noopener">Whole day in Google Maps</a>`:""}</div>
           ${d.note ? `<div class="note">${esc(d.note)}</div>` : ""}
-          <ol class="stops">${d.stops.map(s => typeof s === "string" ? `<li class="leg"><span></span><span>${esc(s.replace(/^→\s*/,""))}</span></li>` : `<li class="stop${s[4]?' opt':''}"><span class="tm">${esc(s[0])}</span><div><div class="h">${esc(s[1])}</div>${s[2]?`<div class="x">${esc(s[2])}</div>`:""}${s[3]?`<a class="mp" href="${mapUrl(s[3])}" target="_blank" rel="noopener">Map</a>`:""}</div></li>`).join("")}</ol>
+          <ol class="stops">${stopsHtml(d)}</ol>
         </div></div>`;
     });
     html += `</div>`;
@@ -822,7 +908,7 @@ function checklist(listSel, barSel, items, key, render){
   host.addEventListener("change", e => { const b = e.target; if(!b.dataset.k) return; state[b.dataset.k] = b.checked; store.set(key, state); update(); });
   update();
 }
-checklist("#booklist","#bookbar",BOOK,"jp27-book",{
+checklist("#booklist","#bookbar",BOOK,"jp27-book2",{
   locked: it => !!it[3],
   html: it => `<span class="when">${esc(it[0]==="done"?"Done":it[0])}</span><span class="w"><b>${esc(it[1])}</b></span>${it[2]?`<br><span style="color:var(--muted);font-size:14px">${esc(it[2])}</span>`:""}`
 });
@@ -833,7 +919,8 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
   const total = BUDGET.reduce((a,r)=>a+r[2],0);
   $("#budgetRows").innerHTML = BUDGET.map(r => `<tr><td>${esc(r[0])}</td><td class="r">${r[1]||"—"}</td><td class="r">£${r[2].toLocaleString("en-GB")}</td></tr>`).join("")
    + `<tr class="tot"><td>Total per person</td><td class="r"></td><td class="r">£${total.toLocaleString("en-GB")}</td></tr>`
-   + `<tr><td style="color:var(--muted)">Still to spend after flights</td><td class="r"></td><td class="r" style="color:var(--muted)">£${(total-578).toLocaleString("en-GB")}</td></tr>`;
+   + `<tr><td style="color:var(--muted)">Already paid (flights and all four stays)</td><td class="r"></td><td class="r" style="color:var(--muted)">£${PAID_EACH.toLocaleString("en-GB",{minimumFractionDigits:2})}</td></tr>`
+   + `<tr><td><b>Still to pay, each</b></td><td class="r">~¥${(Math.round((total-PAID_EACH)*RATE/1000)*1000).toLocaleString("en-GB")}</td><td class="r"><b>£${(total-PAID_EACH).toLocaleString("en-GB",{minimumFractionDigits:2})}</b></td></tr>`;
 })();
 
 (function(){
@@ -879,6 +966,60 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
   const tab=document.querySelector('.tab[data-tab="maps"]');
   tab.addEventListener("click",()=>{ if(!loaded) load(); });
   if(!$("#p-maps").hidden) load();
+})();
+
+/* ======================= SPENDING ======================= */
+(function(){
+  const cfg = store.get("jp27-spcfg", {n1:"Me", n2:"Friend", rate:RATE});
+  let rows = store.get("jp27-spend", []);
+  const gbp = n => "£" + n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const yen = n => "¥" + Math.round(n).toLocaleString("en-GB");
+  const toGbp = r => r.cur === "GBP" ? r.amt : r.amt / cfg.rate;
+  const names = () => [cfg.n1 || "Person 1", cfg.n2 || "Person 2"];
+  function draw(){
+    const [a,b] = names();
+    $("#spWho").innerHTML = `<option value="0">${esc(a)}</option><option value="1">${esc(b)}</option>`;
+    $("#spN1").value = cfg.n1; $("#spN2").value = cfg.n2; $("#spRate").value = cfg.rate;
+    // totals
+    const cats = {}; let total = 0; const share = [0,0], paid = [0,0];
+    rows.forEach(r => { const g = toGbp(r); total += g; cats[r.cat] = (cats[r.cat]||0) + g; paid[r.who] += g;
+      if (r.f === "both"){ share[0] += g/2; share[1] += g/2; } else if (r.f === "payer") share[r.who] += g; else share[1-r.who] += g; });
+    const budgetBoth = (BUDGET.reduce((x,r)=>x+r[2],0) - PAID_EACH) * 2;
+    const owes = paid[0] - share[0]; // positive: person 2 owes person 1
+    const settle = Math.abs(owes) < 0.005 ? "All square." : owes > 0 ? `${esc(b)} owes ${esc(a)} ${gbp(owes)} (${yen(owes*cfg.rate)})` : `${esc(a)} owes ${esc(b)} ${gbp(-owes)} (${yen(-owes*cfg.rate)})`;
+    $("#spSummary").innerHTML = rows.length ? `<table><tbody>
+      ${Object.entries(cats).sort((x,y)=>y[1]-x[1]).map(([c,v])=>`<tr><td>${esc(c)}</td><td class="r">${yen(v*cfg.rate)}</td><td class="r">${gbp(v)}</td></tr>`).join("")}
+      <tr class="tot"><td>Spent so far, both of us</td><td class="r">${yen(total*cfg.rate)}</td><td class="r">${gbp(total)}</td></tr>
+      <tr><td style="color:var(--muted)">Left of the on-trip budget (${gbp(budgetBoth)} for two)</td><td class="r"></td><td class="r" style="color:var(--muted)">${gbp(budgetBoth-total)}</td></tr>
+      <tr><td>Share: ${esc(a)}</td><td class="r"></td><td class="r">${gbp(share[0])}</td></tr>
+      <tr><td>Share: ${esc(b)}</td><td class="r"></td><td class="r">${gbp(share[1])}</td></tr>
+      <tr><td colspan="3"><b>${settle}</b></td></tr></tbody></table>` : `<p style="margin:0;color:var(--muted)">Nothing logged yet. Totals, each person's share and who owes whom will appear here.</p>`;
+    $("#spList").innerHTML = rows.length ? rows.map((r,i)=>({r,i})).reverse().map(({r,i}) => `<div class="sprow"><span>${esc(r.what||r.cat)}</span><span class="a">${r.cur==="GBP"?gbp(r.amt):yen(r.amt)}</span><button data-del="${i}" aria-label="Delete this entry">Delete</button><span class="m">${esc(r.d)} · ${esc(r.cat)} · paid by ${esc(names()[r.who])} · ${r.f==="both"?"split":r.f==="payer"?"for "+esc(names()[r.who]):"for "+esc(names()[1-r.who])}</span></div>`).join("") : `<p style="margin:0;color:var(--muted)">No entries.</p>`;
+  }
+  const save = () => { store.set("jp27-spend", rows); store.set("jp27-spcfg", cfg); draw(); };
+  $("#spForm").addEventListener("submit", e => { e.preventDefault(); const amt = parseFloat($("#spAmt").value); if (!(amt > 0)) return;
+    rows.push({amt, cur:$("#spCur").value, what:$("#spWhat").value.trim(), cat:$("#spCat").value, who:+$("#spWho").value, f:$("#spFor").value, d:new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short"}).format(new Date())});
+    const who = $("#spWho").value; save(); $("#spAmt").value = ""; $("#spWhat").value = ""; $("#spWho").value = who; $("#spAmt").focus(); });
+  $("#spList").addEventListener("click", e => { const b = e.target.closest("[data-del]"); if (!b) return; rows.splice(+b.dataset.del, 1); save(); });
+  $("#spN1").addEventListener("change", e => { cfg.n1 = e.target.value.trim(); save(); });
+  $("#spN2").addEventListener("change", e => { cfg.n2 = e.target.value.trim(); save(); });
+  $("#spRate").addEventListener("change", e => { const v = parseFloat(e.target.value); if (v > 0){ cfg.rate = v; save(); } else e.target.value = cfg.rate; });
+  let armed = false;
+  $("#spClear").addEventListener("click", e => { if (!armed){ armed = true; e.target.textContent = "Tap again to clear everything"; setTimeout(()=>{ armed = false; e.target.textContent = "Clear all entries"; }, 4000); return; } rows = []; armed = false; e.target.textContent = "Clear all entries"; save(); });
+  $("#spCsv").addEventListener("click", () => { const q = v => '"' + String(v).replace(/"/g,'""') + '"';
+    const csv = ["Date,What,Type,Amount,Currency,GBP,Paid by,For"].concat(rows.map(r => [r.d, r.what, r.cat, r.amt, r.cur, toGbp(r).toFixed(2), names()[r.who], r.f].map(q).join(","))).join("\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], {type:"text/csv"})); a.download = "japan-spending.csv"; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 2000); });
+  draw();
+})();
+
+/* ======================= OFFLINE ======================= */
+(function(){
+  const el = $("#offl"); if (!el) return;
+  if (!("serviceWorker" in navigator) || location.protocol === "file:"){ el.textContent = ""; return; }
+  let ready = false;
+  const upd = () => { el.textContent = !navigator.onLine ? "You're offline. Showing the saved copy." : ready ? "Saved on this device: the plan works without signal. Open each map once to save it too." : ""; };
+  navigator.serviceWorker.register("sw.js").then(() => navigator.serviceWorker.ready).then(() => { ready = true; upd(); }).catch(() => { el.textContent = "Offline saving isn't available in this browser."; });
+  addEventListener("offline", upd); addEventListener("online", upd); upd();
 })();
 
 /* ======================= GUIDE ======================= */

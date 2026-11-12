@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Osaka Stops Map</title>
 <meta name="description" content="Satellite map of every Osaka stop on our March 2027 trip, by day, with the best areas to stay.">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 :root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
@@ -115,11 +117,12 @@ const ZONES = [
   why:"Walk to the USJ gates, but you'd be out on a limb for the other three days.",
   pts:["Day 17 rope drop on foot","Namba ~25 min","Hotels are priced for theme-park guests"]}
 ];
+if("serviceWorker" in navigator && location.protocol!=="file:") navigator.serviceWorker.register("sw.js").catch(()=>{});
 const isDark = matchMedia("(prefers-color-scheme: dark)").matches;
 const map = L.map("map",{zoomControl:true}).setView([35.69,139.74],12);
-const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
-const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"Labels © Esri"});
-const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors"});
+const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,crossOrigin:true,attribution:"Imagery © Esri, Maxar, Earthstar Geographics"});
+const labels = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,crossOrigin:true,attribution:"Labels © Esri"});
+const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,crossOrigin:true,attribution:"© OpenStreetMap contributors"});
 sat.addTo(map); labels.addTo(map);
 L.control.layers({"Satellite":sat,"Street map":streets},{"Place names":labels},{collapsed:true}).addTo(map);
 
