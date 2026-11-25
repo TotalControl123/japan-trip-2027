@@ -68,6 +68,11 @@ T.BOOK.forEach(b => {
   if (b[4] && (!isDate(b[4]) || b[4] >= start)) err(`To book "${b[1]}": calendar date ${b[4]} must be a real date before the trip`);
 });
 if (new Set(T.BOOK.filter(b => b[4]).map(b => b[1])).size !== T.BOOK.filter(b => b[4]).length) err("Two to-book items with calendar dates share a title");
+const slug = t => t.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+const slugs = T.BOOK.map(b => slug(b[1]));
+slugs.forEach((s, i) => { if (!s || slugs.indexOf(s) !== i) err(`To book "${T.BOOK[i][1]}": its title must be unique (the shared ticks are filed under it)`); });
+if (!Array.isArray(T.PEOPLE) || T.PEOPLE.length !== 2 || T.PEOPLE.some(p => !/^[a-z]+$/.test(p[0]) || !p[1])) err("PEOPLE should be two entries like [\"dave\",\"Dave\"]");
+if (T.SYNC_URL && !/^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.(firebasedatabase\.app|firebaseio\.com)\/?$/.test(T.SYNC_URL)) err("SYNC_URL should be the database address only, e.g. https://name-default-rtdb.europe-west1.firebasedatabase.app");
 const ics = join(root, "booking-reminders.ics");
 if (!existsSync(ics) || readFileSync(ics, "utf8") !== buildIcs()) err("booking-reminders.ics is out of date. Run: node tools/build.mjs");
 

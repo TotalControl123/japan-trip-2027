@@ -195,6 +195,18 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
   .flight .ap{font-size:24px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ---------- two-person ticks ---------- */
+.who{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 8px;font-size:14px;color:var(--muted)}
+.syncline{font-size:13px;color:var(--muted);margin:0 0 12px}
+.checklist li.two{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:11px 0;align-items:start}
+.checklist li.two .bx{display:grid;grid-template-columns:repeat(2,44px);justify-items:center}
+.checklist li.two .nm{display:block;font-size:11px;line-height:1.2;color:var(--muted);font-weight:600}
+.checklist li.two .nm.me{color:var(--ink)}
+.checklist li.two label{display:block;padding:0 0 4px;cursor:pointer;text-align:center}
+.checklist li.two input{width:22px;height:22px;margin:2px 0 0}
+.checklist li.two.all .tx{opacity:.5}
+.checklist li.two.all .tx .w{text-decoration:line-through}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 /* ---------- today, changes, tickets ---------- */
 .today{border:1px solid var(--rule);border-left:5px solid var(--c,var(--sign));background:var(--panel);border-radius:12px;padding:14px 16px;margin:0 0 14px}
 .today .k{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:700}
@@ -335,7 +347,9 @@ footer{color:var(--muted);font-size:13px;padding:24px 0 40px;border-top:1px soli
   <!-- TO BOOK -->
   <section class="panel" id="p-tobook" role="tabpanel" hidden>
     <h2>To book</h2>
-    <p class="lede">Tick things off as you go. Ticks are saved on this device only. <a href="booking-reminders.ics" download>Add the booking dates to your calendar</a> (one file, works on iPhone, Google and Outlook).</p>
+    <p class="lede">A box each: tick your own when your part is done. <a href="booking-reminders.ics" download>Add the booking dates to your calendar</a> (one file, works on iPhone, Google and Outlook).</p>
+    <div class="who" id="whoPick"></div>
+    <p class="syncline" id="syncLine" role="status"></p>
     <div class="progress" aria-hidden="true"><i id="bookbar"></i></div>
     <ul class="checklist" id="booklist"></ul>
     <h3>Where the confirmations are</h3>
@@ -558,10 +572,64 @@ function checklist(listSel, barSel, items, key, render){
   host.addEventListener("change", e => { const b = e.target; if(!b.dataset.k) return; state[b.dataset.k] = b.checked; store.set(key, state); update(); });
   update();
 }
-checklist("#booklist","#bookbar",BOOK,"jp27-book2",{
-  locked: it => !!it[3],
-  html: it => `<span class="when">${esc(it[0]==="done"?"Done":it[0])}</span><span class="w"><b>${esc(it[1])}</b></span>${it[2]?`<br><span style="color:var(--muted);font-size:14px">${esc(it[2])}</span>`:""}`
-});
+/* ---- To book: a tick box per person, shared through SYNC_URL when it is set ---- */
+const slugOf = t => t.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
+const Ticks = (function(){
+  const base = (SYNC_URL || "").replace(/\/+$/,"");
+  let state = store.get("jp27-ticks", {});       // {item: {dave:true, alan:false}}
+  let pending = store.get("jp27-pending", []);   // ticks made offline: [item, who, value]
+  let me = store.get("jp27-me", "");
+  let status = base ? "Connecting to the shared list…" : "Not shared yet: ticks stay on this phone.";
+  const host = $("#booklist"), ids = BOOK.map(b => slugOf(b[1]));
+  const on = (id, who) => !!(state[id] && state[id][who]);
+  const set = (id, who, v) => { (state[id] = state[id] || {})[who] = v; };
+  const hhmm = () => new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+
+  function render(){
+    $("#whoPick").innerHTML = `This phone is: ` + PEOPLE.map(([k,n]) => `<button class="chip" data-me="${k}" aria-pressed="${me===k}">${esc(n)}'s</button>`).join("");
+    $("#syncLine").textContent = status + (pending.length ? ` ${pending.length} tick${pending.length>1?"s":""} waiting to send.` : "");
+    host.innerHTML = BOOK.map((it, i) => { const id = ids[i], locked = !!it[3], all = locked || PEOPLE.every(([k]) => on(id,k));
+        return `<li class="two${all?" all":""}"><span class="bx">${PEOPLE.map(([k,n]) => `<label><input type="checkbox" data-id="${id}" data-who="${k}" ${locked||on(id,k)?"checked":""} ${locked?"disabled":""}><span class="nm${me===k?" me":""}">${esc(n)}</span><span class="sr">: ${esc(it[1])}</span></label>`).join("")}</span>
+          <span class="tx"><span class="when">${esc(it[0]==="done"?"Done":it[0])}</span><span class="w"><b>${esc(it[1])}</b></span>${it[2]?`<br><span style="color:var(--muted);font-size:14px">${esc(it[2])}</span>`:""}</span></li>`; }).join("");
+    const boxes = host.querySelectorAll("input"); $("#bookbar").style.width = (100*[...boxes].filter(b=>b.checked).length/boxes.length)+"%";
+  }
+  const changed = () => { store.set("jp27-ticks", state); store.set("jp27-pending", pending); render(); document.dispatchEvent(new Event("jp27-ticks")); };
+
+  async function send(id, who, v){
+    const r = await fetch(`${base}/jp27/ticks/${id}/${who}.json`, {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(v)});
+    if (!r.ok) throw new Error("save refused: " + r.status);
+  }
+  let busy = false;
+  async function sync(){
+    if (!base || busy) return; busy = true;
+    try {
+      while (pending.length){ const [id, who, v] = pending[0]; await send(id, who, v); pending.shift(); store.set("jp27-pending", pending); }
+      const r = await fetch(base + "/jp27/ticks.json", {cache:"no-store"}); if (!r.ok) throw new Error("read refused: " + r.status);
+      const remote = (await r.json()) || {}, next = {};
+      Object.keys(remote).forEach(id => { if (remote[id] && typeof remote[id] === "object") next[id] = {...remote[id]}; });
+      // first connection: send up any ticks this phone already had
+      Object.keys(state).forEach(id => Object.keys(state[id]).forEach(who => { if (state[id][who] && !(next[id] && who in next[id]) && ids.includes(id)){ (next[id] = next[id] || {})[who] = true; pending.push([id, who, true]); } }));
+      state = next; status = `Shared with ${PEOPLE.map(p=>p[1]).join(" and ")}. Last checked ${hhmm()}.`;
+      changed(); if (pending.length){ busy = false; return sync(); }
+    } catch (e) { status = navigator.onLine ? "Couldn't reach the shared list just now. Your ticks are kept and will be sent." : "Offline. Your ticks are kept and will be sent when you're back online."; render(); }
+    busy = false;
+  }
+
+  host.addEventListener("change", e => { const b = e.target; if (!b.dataset.id) return;
+    set(b.dataset.id, b.dataset.who, b.checked);
+    if (base) pending = pending.filter(p => !(p[0]===b.dataset.id && p[1]===b.dataset.who)).concat([[b.dataset.id, b.dataset.who, b.checked]]);
+    changed(); sync(); });
+  $("#whoPick").addEventListener("click", e => { const b = e.target.closest("[data-me]"); if (!b) return; me = b.dataset.me; store.set("jp27-me", me);
+    // ticks made before there were two boxes belong to whoever owns this phone
+    const old = store.get("jp27-book2", null);
+    if (old && !store.get("jp27-moved", false)){ BOOK.forEach((it,i) => { if (old["i"+i] && !it[3] && !on(ids[i], me)){ set(ids[i], me, true); if (base) pending.push([ids[i], me, true]); } }); store.set("jp27-moved", true); }
+    changed(); sync(); });
+  render(); sync();
+  addEventListener("online", sync); document.addEventListener("visibilitychange", () => { if (!document.hidden) sync(); });
+  setInterval(() => { if (!document.hidden && !$("#p-tobook").hidden) sync(); }, 20000);
+  return { on, ids, get me(){ return me; }, sync };
+})();
+document.querySelector('.tab[data-tab="tobook"]').addEventListener("click", () => Ticks.sync());
 checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: it => `<span class="w">${esc(it)}</span>` });
 
 /* ======================= BUDGET ======================= */
@@ -689,16 +757,21 @@ checklist("#packlist","#packbar",PACK,"jp27-pack",{ locked: () => false, html: i
       <div class="acts"><a href="#day-${day.n}" id="todayOpen">Open today's plan</a>${next && next[3] ? `<a href="${prev && prev !== next[3] ? dirUrl(prev, next[3]) : mapUrl(next[3])}" target="_blank" rel="noopener">Directions to the next stop</a>` : ""}${city.map ? `<a href="${city.map}">Map</a>` : ""}<a href="#" data-goto="stays">Airbnb details</a></div></div>`;
     $("#todayOpen").addEventListener("click", e => { e.preventDefault(); if (filter !== "all" && filter !== day.city){ filter = "all"; store.set("jp27-filter","all"); renderFilters(); } openSet.add(day.n); renderItin(); document.getElementById("day-"+day.n)?.scrollIntoView({block:"start"}); });
   } else if (date < DAYS[0].date){
-    const ticks = store.get("jp27-book2", {});
-    const open = BOOK.map((b,i) => ({b,i})).filter(({b,i}) => !b[3] && !ticks["i"+i]);
-    const dated = open.filter(x => x.b[4]).sort((x,y) => x.b[4] < y.b[4] ? -1 : 1), soon = new Date(date+"T12:00:00"); soon.setDate(soon.getDate()+14);
-    const show = [...open.filter(x => !x.b[4]), ...dated.filter(x => x.b[4] <= iso(soon))].slice(0,6);
-    const later = dated.find(x => x.b[4] > iso(soon));
-    const days = Math.round((new Date(DAYS[0].date+"T12:00:00") - new Date(date+"T12:00:00"))/864e5);
-    el.innerHTML = `<div class="today"><div class="k">${days} days to go · to do now</div>
-      ${show.length ? `<ul>${show.map(({b}) => `<li><b>${esc(b[1])}</b>${b[4] ? ` <span class="${b[4] < date ? "due" : ""}">(${b[4] < date ? "was due " : "from "}${esc(nice(b[4]))})</span>` : ""}</li>`).join("")}</ul>` : `<p>Nothing needs doing in the next two weeks.</p>`}
-      ${later ? `<p style="color:var(--muted);font-size:14px">After that: ${esc(later.b[1])}, from ${esc(nice(later.b[4]))}.</p>` : ""}
-      <div class="acts"><a href="#" data-goto="tobook">Open the To book list</a></div></div>`;
+    const drawPre = () => {
+      const me = Ticks.me, others = PEOPLE.filter(p => p[0] !== me);
+      const mine = (b,i) => me ? Ticks.on(Ticks.ids[i], me) : PEOPLE.every(p => Ticks.on(Ticks.ids[i], p[0]));
+      const open = BOOK.map((b,i) => ({b,i})).filter(({b,i}) => !b[3] && !mine(b,i));
+      const who = i => others.filter(p => Ticks.on(Ticks.ids[i], p[0])).map(p => p[1]);
+      const dated = open.filter(x => x.b[4]).sort((x,y) => x.b[4] < y.b[4] ? -1 : 1), soon = new Date(date+"T12:00:00"); soon.setDate(soon.getDate()+14);
+      const show = [...open.filter(x => !x.b[4]), ...dated.filter(x => x.b[4] <= iso(soon))].slice(0,6);
+      const later = dated.find(x => x.b[4] > iso(soon));
+      const days = Math.round((new Date(DAYS[0].date+"T12:00:00") - new Date(date+"T12:00:00"))/864e5);
+      el.innerHTML = `<div class="today"><div class="k">${days} days to go · ${me ? esc(PEOPLE.find(p=>p[0]===me)[1])+"'s to-do" : "to do now"}</div>
+        ${show.length ? `<ul>${show.map(({b,i}) => `<li><b>${esc(b[1])}</b>${b[4] ? ` <span class="${b[4] < date ? "due" : ""}">(${b[4] < date ? "was due " : "from "}${esc(nice(b[4]))})</span>` : ""}${who(i).length ? ` <span style="color:var(--muted)">· ${esc(who(i).join(" and "))} has ticked this</span>` : ""}</li>`).join("")}</ul>` : `<p>Nothing needs doing in the next two weeks.</p>`}
+        ${later ? `<p style="color:var(--muted);font-size:14px">After that: ${esc(later.b[1])}, from ${esc(nice(later.b[4]))}.</p>` : ""}
+        <div class="acts"><a href="#" data-goto="tobook">Open the To book list</a></div></div>`;
+    };
+    drawPre(); document.addEventListener("jp27-ticks", drawPre);
   } else { el.innerHTML = ""; }
   el.addEventListener("click", e => { const a = e.target.closest("[data-goto]"); if (!a) return; e.preventDefault(); showTab(a.dataset.goto); scrollTo({top:0}); });
 

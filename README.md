@@ -41,6 +41,35 @@ GitHub runs both on every push (the "Check the plan" action) and saves the rebui
 
 The check catches slips like times out of order, a pin with no stop, stays whose dates don't join up, and broken links between the site's own files. It can't tell whether a fact is still true (opening hours, prices), and it doesn't test links to other websites.
 
+## Shared ticks on the To book list
+
+Each item has a box for each person in `PEOPLE`. With `SYNC_URL` empty, ticks stay on each phone. To share them, `SYNC_URL` points at a free Firebase Realtime Database:
+
+1. https://console.firebase.google.com → create a project → Build → Realtime Database → Create database (start in locked mode).
+2. On the Rules tab, paste this and Publish:
+
+```json
+{
+  "rules": {
+    "jp27": {
+      ".read": true,
+      "ticks": {
+        "$item": {
+          "$who": {
+            ".write": true,
+            ".validate": "newData.isBoolean() && ($who === 'dave' || $who === 'alan') && $item.length < 60"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+3. Copy the database address from the Data tab (it looks like `https://name-default-rtdb.europe-west1.firebasedatabase.app`) into `SYNC_URL` in `trip-data.js`.
+
+Anyone with the site link can tick or untick boxes; the rules stop them doing anything else to the database.
+
 ## Previewing a day
 
 Add a date and time (Japan time) to the address to see the Today card as it will look on the trip:
