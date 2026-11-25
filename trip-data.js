@@ -543,12 +543,12 @@ const TICKETS = [
 // ---- The two tick boxes on the To book list, and where the ticks are shared.
 // SYNC_URL is the web address of the Firebase Realtime Database (see README). Leave it "" and ticks stay on each phone.
 const PEOPLE = [["dave","Dave"],["alan","Alan"]];
-const SYNC_URL = "";
+const SYNC_URL = "https://japan-2027-b9d7e-default-rtdb.europe-west1.firebasedatabase.app";
 
 // ---- What changed, newest first. Add a line and bump DATA_VERSION whenever the plan changes.
-const DATA_VERSION = "2026-11-25c";
+const DATA_VERSION = "2026-11-25d";
 const CHANGES = [
- ["25 Nov 2026","The To book list now has a tick box each for Dave and Alan."],
+ ["25 Nov 2026","The To book list now has a tick box each for Dave and Alan, shared between both phones."],
  ["25 Nov 2026","Maps now cover the day trips too (Fuji, Hiroshima, Nara, Himeji & Kobe). Added a Today card, a print layout, a what-changed list and a list of where confirmations are kept."],
  ["25 Nov 2026","Full re-check. Tsukiji moved to Tue 9 (the market shuts on Sundays). Hakone day starts an hour earlier. Odawara to Kyoto is the 14:07 Hikari. Day 12 runs earlier for Sanjusangen-do's 15:30 last entry. Kitano Tenmangu now comes before Kinkaku-ji. Shibuya Sky sells 2 weeks ahead (22 Feb, 15:00 UK) and checks passports. Himeji is ¥2,500, the Hakone Freepass ¥7,100. Hanatoro removed (it ended in 2022)."],
  ["12 Nov 2026","Routes now start from the booked stays. Added directions links, offline use, the spending log, rain plans and calendar reminders."],
