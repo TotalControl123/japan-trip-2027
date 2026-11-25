@@ -1,5 +1,5 @@
 // Offline support for the trip site. Bump VERSION when the list of files changes.
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL = "jp27-shell-" + VERSION, RUNTIME = "jp27-runtime", TILES = "jp27-tiles";
 const CORE = ["./", "index.html", "tokyo-map.html", "hakone-map.html", "kyoto-map.html", "osaka-map.html",
   "manifest.webmanifest", "icon-192.png", "icon-512.png", "booking-reminders.ics",

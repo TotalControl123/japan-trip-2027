@@ -80,17 +80,19 @@ const DAYS = {
  9:{label:"Day 9 · Mon 15",title:"Lake Ashi, shrine, out via Odawara",c:"#00A2C7"}
 };
 const STOPS = [
- [8,"11:25","Hakone-Yumoto (Romancecar arrives)",35.2326,139.1053,"Hakone-Yumoto Station"],
- [8,"12:15","Gora: quick lunch, buy dinner",35.2503,139.0467,"Gora Station"],
- [8,"13:00","Hakone Open-Air Museum",35.2449,139.0516],
- [8,"14:30","Sounzan (cable car → ropeway)",35.2524,139.0389,"Sounzan Station"],
- [8,"15:00","Owakudani",35.2440,139.0198],
- [8,"16:15","Togendai (ropeway ends, bus to FUMI)",35.2410,139.0075,"Togendai Station"],
+ [8,"10:25","Hakone-Yumoto (Romancecar arrives)",35.2326,139.1053,"Hakone-Yumoto Station"],
+ [8,"11:15","Hakone Open-Air Museum",35.2449,139.0516],
+ [8,"12:50","Gora: lunch, buy dinner",35.2503,139.0467,"Gora Station"],
+ [8,"13:45","Sounzan (cable car → ropeway)",35.2524,139.0389,"Sounzan Station"],
+ [8,"14:00","Owakudani",35.2440,139.0198],
+ [8,"15:15","Togendai (ropeway ends, bus to FUMI)",35.2410,139.0075,"Togendai Station"],
  [9,"09:30","Pirate ship from Togendai",35.2410,139.0075,"Togendai Port"],
  [9,"10:10","Moto-Hakone port",35.2028,139.0263,"Moto-Hakone Port"],
  [9,"10:30","Hakone Shrine & the lake torii",35.2049,139.0249,"Hakone Shrine"],
- [9,"11:15","Cedar avenue & Amazake-chaya",35.1990,139.0430,"Amazake-chaya"],
- [9,"13:30","Odawara: Hikari to Kyoto",35.2564,139.1551,"Odawara Station"]
+ [9,"11:15","Cedar avenue",35.1975,139.0262,"Hakone Old Tokaido Road Cedar Avenue"],
+ [9,"12:00","Amazake-chaya (K-line bus)",35.2050,139.0450,"Amazake-chaya"],
+ [9,"12:45","Hakone-Yumoto (train to Odawara)",35.2330,139.1049,"Hakone-Yumoto Station"],
+ [9,"14:07","Odawara: Hikari to Kyoto",35.2564,139.1551,"Odawara Station"]
 ];
 const ZONES = [];
 if("serviceWorker" in navigator && location.protocol!=="file:") navigator.serviceWorker.register("sw.js").catch(()=>{});

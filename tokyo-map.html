@@ -62,7 +62,7 @@ details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-tran
 
   <h2>Where we're staying</h2>
   <p class="sub" style="margin:0 0 6px">★ <b>Shinjuku Warm House</b>, Higashi-Shinjuku, 6 nights (Mon 8 – Sun 14). <a href="#" id="toBase">Show on map</a></p>
-  <ul class="offmap"><li>Narita: Narita Express to Shinjuku (~80 min), then Oedo line 1 stop or a ~¥1,200 taxi</li><li>Shinjuku station: ~15 min on foot, or Oedo line 1 stop</li><li>Tsukiji (Day 8): Oedo line direct, ~20 min</li><li>Shibuya & Harajuku: Fukutoshin line direct, ~10 min</li><li>Akihabara & Ueno: Oedo line, ~20 min</li><li>DisneySea: JR from Shinjuku via Tokyo, ~50 min</li></ul>
+  <ul class="offmap"><li>Narita: Narita Express to Shinjuku (~80 min), then Oedo line 1 stop or a ~¥1,200 taxi</li><li>Shinjuku station: ~15 min on foot, or Oedo line 1 stop</li><li>Tsukiji (Day 3): Oedo line direct, ~20 min</li><li>Shibuya & Harajuku: Fukutoshin line direct, ~10 min</li><li>Akihabara & Ueno: Oedo line, ~20 min</li><li>DisneySea: JR from Shinjuku via Tokyo, ~50 min</li></ul>
 
   <details class="cmp" id="cmp"><summary>Areas we compared (before booking)</summary>
   <div id="zones"></div>
@@ -84,12 +84,12 @@ details.cmp summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-tran
 <script>
 const DAYS = {
  2:{label:"Day 2 · Mon 8",title:"Shinjuku by night",c:"#E5484D"},
- 3:{label:"Day 3 · Tue 9",title:"Harajuku & Shibuya",c:"#F76B15"},
+ 3:{label:"Day 3 · Tue 9",title:"Tsukiji, Harajuku & Shibuya",c:"#F76B15"},
  4:{label:"Day 4 · Wed 10",title:"DisneySea",c:"#D6409F"},
  5:{label:"Day 5 · Thu 11",title:"Asakusa, Ueno, Yanaka, teamLab",c:"#FFC53D"},
  6:{label:"Day 6 · Fri 12",title:"Pokémon, Akihabara, Nakano",c:"#30A46C"},
  7:{label:"Day 7 · Sat 13",title:"Fuji day trip",c:"#00A2C7"},
- 8:{label:"Day 8 · Sun 14",title:"Tsukiji, then Hakone",c:"#8E4EC6"}
+ 8:{label:"Day 8 · Sun 14",title:"Romancecar to Hakone",c:"#8E4EC6"}
 };
 // [day, time, name, lat, lng, search]
 const STOPS = [
@@ -98,7 +98,8 @@ const STOPS = [
  [2,"18:45","Omoide Yokocho",35.6929,139.6995],
  [2,"20:00","Kabukicho & the Godzilla head",35.6951,139.7019,"Godzilla Head Shinjuku"],
  [2,"21:00","Golden Gai",35.6940,139.7047],
- [3,"09:00","Shinjuku Gyoen",35.6852,139.7100],
+ [3,"07:00","Tsukiji Outer Market",35.6654,139.7707],
+ [3,"09:15","Shinjuku Gyoen (Sendagaya Gate)",35.6820,139.7105,"Shinjuku Gyoen Sendagaya Gate"],
  [3,"10:30","Meiji Jingu",35.6764,139.6993],
  [3,"11:30","Takeshita-dori",35.6715,139.7036,"Takeshita Street"],
  [3,"12:00","Kiddy Land & Omotesando",35.6687,139.7067,"Kiddy Land Harajuku"],
@@ -129,8 +130,7 @@ const STOPS = [
  [6,"17:15","Nakano Broadway",35.7088,139.6656],
  [7,"07:00","Busta Shinjuku (bus to Kawaguchiko)",35.6886,139.7005,"Busta Shinjuku"],
  [7,"19:00","Fuunji tsukemen",35.6869,139.6960,"Fuunji Shinjuku"],
- [8,"07:00","Tsukiji Outer Market",35.6654,139.7707],
- [8,"09:30","Odakyu Romancecar to Hakone, Shinjuku",35.6905,139.6995,"Odakyu Shinjuku Station"]
+ [8,"09:00","Odakyu Romancecar to Hakone, Shinjuku",35.6905,139.6995,"Odakyu Shinjuku Station"]
 ];
 const ZONES = [
  {id:"shinjuku",name:"Shinjuku (south & west of the station)",tag:["best","Best fit"],lat:35.6890,lng:139.6990,r:750,
