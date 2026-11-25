@@ -5,257 +5,226 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:Japan 2027 bookings
 BEGIN:VEVENT
-UID:jp27-20261201-japanenterthenintendomus@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-nintendo-museum-lottery@japan-trip-2027
+DTSTAMP:20261201T000000Z
 DTSTART;VALUE=DATE:20261201
 DTEND;VALUE=DATE:20261202
-SUMMARY:Japan: enter the Nintendo Museum lottery
-DESCRIPTION:Entries are open all December for Wed 17 March. Results on the afternoon of 1 Jan.
+SUMMARY:Japan: Nintendo Museum lottery
+DESCRIPTION:1–31 Dec. Enter during December for Wed 17 March. Free Nintendo Account\, both full names\, pick 2–3 time slots. Results 1 Jan.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: enter the Nintendo Museum lottery
+DESCRIPTION:Japan: Nintendo Museum lottery
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20261228-japannintendomuseumlotte@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
-DTSTART;VALUE=DATE:20261228
-DTEND;VALUE=DATE:20261229
-SUMMARY:Japan: Nintendo Museum lottery closes soon
-DESCRIPTION:Last few days to enter for Wed 17 March.
-TRANSP:TRANSPARENT
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:Japan: Nintendo Museum lottery closes soon
-TRIGGER:PT9H
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:jp27-20270104-japandisneyseaticketsfor@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-tokyo-disneysea-wed-10-mar@japan-trip-2027
+DTSTAMP:20270104T000000Z
 DTSTART;VALUE=DATE:20270104
 DTEND;VALUE=DATE:20270105
-SUMMARY:Japan: DisneySea tickets for Wed 10 March
-DESCRIPTION:Tickets release about two months ahead. Check the Tokyo Disney Resort site. Klook as a fallback.
+SUMMARY:Japan: Tokyo DisneySea\, Wed 10 Mar
+DESCRIPTION:Early Jan. Tickets release ~2 months ahead. Klook as fallback.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: DisneySea tickets for Wed 10 March
+DESCRIPTION:Japan: Tokyo DisneySea\, Wed 10 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270125-japancheckusjticketsfort@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-usj-studio-pass-express-tue-23-mar@japan-trip-2027
+DTSTAMP:20270125T000000Z
 DTSTART;VALUE=DATE:20270125
 DTEND;VALUE=DATE:20270126
-SUMMARY:Japan: check USJ tickets for Tue 23 March
-DESCRIPTION:Studio Pass + Express Pass (must include Super Nintendo World). Usually on sale about two months ahead.
+SUMMARY:Japan: USJ Studio Pass + Express\, Tue 23 Mar
+DESCRIPTION:From late Jan. Usually on sale about two months ahead\, so check from late January. Price rises as the date sells. Express must include Super Nintendo World.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: check USJ tickets for Tue 23 March
+DESCRIPTION:Japan: USJ Studio Pass + Express\, Tue 23 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270201-japanteamlabplanetsticke@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
-DTSTART;VALUE=DATE:20270201
-DTEND;VALUE=DATE:20270202
-SUMMARY:Japan: teamLab Planets tickets for Thu 11 March 18:45
-DESCRIPTION:Book when March dates are open.
-TRANSP:TRANSPARENT
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:Japan: teamLab Planets tickets for Thu 11 March 18:45
-TRIGGER:PT9H
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:jp27-20270206-japangrandsumoticketsons@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-grand-sumo-sun-21-mar@japan-trip-2027
+DTSTAMP:20270206T000000Z
 DTSTART;VALUE=DATE:20270206
 DTEND;VALUE=DATE:20270207
-SUMMARY:Japan: Grand Sumo tickets on sale
-DESCRIPTION:For Sun 21 March at EDION Arena Osaka. sumo.or.jp. Sales have opened at 10:00 Japan time (01:00 UK) for other tournaments.
+SUMMARY:Japan: Grand Sumo\, Sun 21 Mar
+DESCRIPTION:6 Feb. sumo.or.jp on release day.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: Grand Sumo tickets on sale
+DESCRIPTION:Japan: Grand Sumo\, Sun 21 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270209-japanpokemoncafebookings@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-poke-mon-cafe-nihombashi@japan-trip-2027
+DTSTAMP:20270209T000000Z
 DTSTART;VALUE=DATE:20270209
 DTEND;VALUE=DATE:20270210
-SUMMARY:Japan: Pokemon Cafe bookings (optional)
-DESCRIPTION:Bookings open 31 days ahead at 18:00 Japan time (09:00 UK). Check the cafe site for exact rules.
+SUMMARY:Japan: Pokémon Café\, Nihombashi
+DESCRIPTION:9 Feb\, optional. Only if you want it. Bookings open 31 days ahead at 18:00 Japan time (09:00 UK) and go in minutes; check the café site for the exact rules. It would replace an hour of Day 5 or Day 6.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: Pokemon Cafe bookings (optional)
+DESCRIPTION:Japan: Pokémon Café\, Nihombashi
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270212-japanlastdaytocancelkyot@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-kyoto-last-day-to-cancel-free@japan-trip-2027
+DTSTAMP:20270212T000000Z
 DTSTART;VALUE=DATE:20270212
 DTEND;VALUE=DATE:20270213
-SUMMARY:Japan: last day to cancel Kyoto for free
-DESCRIPTION:Kyoto Birch House Spring: free cancellation ends before 13 February.
+SUMMARY:Japan: Kyoto: last day to cancel free
+DESCRIPTION:By 12 Feb. Birch House's free cancellation ends before 13 February. (Osaka's ends before 15 March.)
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: last day to cancel Kyoto for free
+DESCRIPTION:Japan: Kyoto: last day to cancel free
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270213-japanbookthefujihighwayb@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-highway-bus-shinjuku-kawaguchiko-sat-13-@japan-trip-2027
+DTSTAMP:20270213T000000Z
 DTSTART;VALUE=DATE:20270213
 DTEND;VALUE=DATE:20270214
-SUMMARY:Japan: book the Fuji highway bus (Sat 13 March)
-DESCRIPTION:Shinjuku to Kawaguchiko 07:00 and back about 16:30. Opens a month ahead.
+SUMMARY:Japan: Highway bus Shinjuku ⇄ Kawaguchiko\, Sat 13 Mar
+DESCRIPTION:Mid Feb. 07:00 out\, ~16:30 back. Opens a month ahead on the Fujikyu/Keio site.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: book the Fuji highway bus (Sat 13 March)
+DESCRIPTION:Japan: Highway bus Shinjuku ⇄ Kawaguchiko\, Sat 13 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270214-japanbookromancecarseats@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-romancecar-shinjuku-hakone-yumoto-sun-14@japan-trip-2027
+DTSTAMP:20270214T000000Z
 DTSTART;VALUE=DATE:20270214
 DTEND;VALUE=DATE:20270215
-SUMMARY:Japan: book Romancecar seats (Sun 14 March about 09:00)
-DESCRIPTION:Shinjuku to Hakone-Yumoto. Odakyu e-Romancecar. Opens a month ahead.
+SUMMARY:Japan: Romancecar Shinjuku → Hakone-Yumoto\, Sun 14 Mar
+DESCRIPTION:Mid Feb. The departure nearest 09:00. Seats open a month ahead on Odakyu's e-Romancecar site; front-row seats go first.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: book Romancecar seats (Sun 14 March about 09:00)
+DESCRIPTION:Japan: Romancecar Shinjuku → Hakone-Yumoto\, Sun 14 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270215-japanbookshinkansenodawa@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-shinkansen-seats-mon-15-and-tue-16-mar@japan-trip-2027
+DTSTAMP:20270215T000000Z
 DTSTART;VALUE=DATE:20270215
 DTEND;VALUE=DATE:20270216
-SUMMARY:Japan: book shinkansen Odawara to Kyoto (Mon 15 March)
-DESCRIPTION:SmartEX app. The direct Hikari around 14:07 (they run every two hours). Use the times SmartEX shows: the timetable changes in mid-March.
+SUMMARY:Japan: Shinkansen seats: Mon 15 and Tue 16 Mar
+DESCRIPTION:Mid Feb. SmartEX app\, a month ahead. Odawara → Kyoto on the direct Hikari around 14:07 (they run every two hours); Kyoto ⇄ Hiroshima 07:00 out\, ~19:15 back. JR changes its timetable in mid-March\, so use the times SmartEX shows.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: book shinkansen Odawara to Kyoto (Mon 15 March)
+DESCRIPTION:Japan: Shinkansen seats: Mon 15 and Tue 16 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270216-japanbookshinkansenkyoto@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
-DTSTART;VALUE=DATE:20270216
-DTEND;VALUE=DATE:20270217
-SUMMARY:Japan: book shinkansen Kyoto to Hiroshima return (Tue 16 March)
-DESCRIPTION:SmartEX app. About 07:00 out and 19:15 back.
+UID:jp27-teamlab-planets-thu-11-mar-18-45@japan-trip-2027
+DTSTAMP:20270201T000000Z
+DTSTART;VALUE=DATE:20270201
+DTEND;VALUE=DATE:20270202
+SUMMARY:Japan: teamLab Planets\, Thu 11 Mar ~18:45
+DESCRIPTION:Feb. Timed tickets; book when March dates open.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: book shinkansen Kyoto to Hiroshima return (Tue 16 March)
+DESCRIPTION:Japan: teamLab Planets\, Thu 11 Mar ~18:45
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270222-japanshibuyaskyticketsat@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-shibuya-sky-tue-9-mar@japan-trip-2027
+DTSTAMP:20270222T000000Z
 DTSTART;VALUE=DATE:20270222
 DTEND;VALUE=DATE:20270223
-SUMMARY:Japan: Shibuya Sky tickets at 15:00 UK TODAY
-DESCRIPTION:Tickets for Tue 9 March open at 00:00 Japan time on 23 Feb = 15:00 UK today. Book the 17:00 slot. Enter passport details exactly.
+SUMMARY:Japan: Shibuya Sky\, Tue 9 Mar
+DESCRIPTION:22 Feb\, 15:00 UK. The 17:00 sunset slot. Tickets open 2 weeks ahead at 00:00 Japan time\, which is 15:00 UK on Mon 22 Feb. Enter passport details exactly; passports are checked at the door.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: Shibuya Sky tickets at 15:00 UK TODAY
+DESCRIPTION:Japan: Shibuya Sky\, Tue 9 Mar
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270223-japanrecheckhoursandclos@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-re-check-opening-hours-and-prices@japan-trip-2027
+DTSTAMP:20270223T000000Z
 DTSTART;VALUE=DATE:20270223
 DTEND;VALUE=DATE:20270224
-SUMMARY:Japan: re-check hours and closures
-DESCRIPTION:Hakone ropeway and pirate ship times. DisneySea closure calendar. USJ Cool Japan. Kitano Tenmangu plum garden hours.
+SUMMARY:Japan: Re-check opening hours and prices
+DESCRIPTION:Late Feb. Everything here was researched in autumn 2026. Check the ropeway\, pirate ship\, museum hours and ticket prices against the official sites. Last full check: 25 November 2026.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: re-check hours and closures
+DESCRIPTION:Japan: Re-check opening hours and prices
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270228-japanvisitjapanwebesimsu@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-visit-japan-web@japan-trip-2027
+DTSTAMP:20270228T000000Z
 DTSTART;VALUE=DATE:20270228
 DTEND;VALUE=DATE:20270301
-SUMMARY:Japan: Visit Japan Web\, eSIM\, Suica
-DESCRIPTION:QR codes saved as screenshots. Open the trip site on each phone to save it offline.
+SUMMARY:Japan: Visit Japan Web
+DESCRIPTION:1 week before. Immigration and customs QR codes\, saved as screenshots.
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: Visit Japan Web\, eSIM\, Suica
+DESCRIPTION:Japan: Visit Japan Web
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:jp27-20270305-japanonlinecheckinforca8@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
+UID:jp27-esim-suica-in-phone-wallet@japan-trip-2027
+DTSTAMP:20270228T000000Z
+DTSTART;VALUE=DATE:20270228
+DTEND;VALUE=DATE:20270301
+SUMMARY:Japan: eSIM + Suica in phone wallet
+DESCRIPTION:1 week before. Ubigi\, Airalo or Sakura Mobile.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Japan: eSIM + Suica in phone wallet
+TRIGGER:PT9H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:jp27-open-this-site-once-on-each-phone@japan-trip-2027
+DTSTAMP:20270228T000000Z
+DTSTART;VALUE=DATE:20270228
+DTEND;VALUE=DATE:20270301
+SUMMARY:Japan: Open this site once on each phone
+DESCRIPTION:1 week before. That saves it for offline use. Open each of the four maps too.
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Japan: Open this site once on each phone
+TRIGGER:PT9H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:jp27-online-check-in-ca848@japan-trip-2027
+DTSTAMP:20270305T000000Z
 DTSTART;VALUE=DATE:20270305
 DTEND;VALUE=DATE:20270306
-SUMMARY:Japan: online check-in for CA848
-DESCRIPTION:Flight is Sun 7 March at 10:40 from Gatwick North. Check the time in Manage Booking.
+SUMMARY:Japan: Online check-in\, CA848
+DESCRIPTION:2 days before. 
 TRANSP:TRANSPARENT
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Japan: online check-in for CA848
-TRIGGER:PT9H
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:jp27-20270314-japanlastdaytocancelosak@japan-trip-2027
-DTSTAMP:20261125T120000Z
-SEQUENCE:2
-DTSTART;VALUE=DATE:20270314
-DTEND;VALUE=DATE:20270315
-SUMMARY:Japan: last day to cancel Osaka for free
-DESCRIPTION:FDS Aura: free cancellation ends before 15 March.
-TRANSP:TRANSPARENT
-BEGIN:VALARM
-ACTION:DISPLAY
-DESCRIPTION:Japan: last day to cancel Osaka for free
+DESCRIPTION:Japan: Online check-in\, CA848
 TRIGGER:PT9H
 END:VALARM
 END:VEVENT

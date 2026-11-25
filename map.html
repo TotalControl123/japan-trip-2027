@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trip Maps</title>
+<meta name="description" content="Satellite maps of every stop on our March 2027 Japan trip, numbered by day.">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#F6F5F2;--card:#fff;--ink:#16181D;--muted:#5D6470;--line:#E3E1DB;--accent:#2F5FD0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}}
+:root[data-theme="dark"]{--bg:#121418;--card:#1B1E24;--ink:#ECEDEF;--muted:#9AA1AC;--line:#2C3038;--accent:#5B86F0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:grid;grid-template-columns:360px 1fr;height:100vh;height:100dvh}
+.panel{overflow:auto;border-right:1px solid var(--line);background:var(--card);padding:16px}
+#map{height:100%;background:#0b1a2a}
+a{color:var(--accent)}
+.back{font-size:13px;text-decoration:none}
+h1{font-size:21px;margin:10px 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip[aria-current="page"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.chip span{color:var(--muted)}
+ul.list{font-size:13px;color:var(--muted);margin:6px 0 0;padding-left:18px}
+ul.list li{margin-bottom:3px}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin-top:14px}
+.pin{width:26px;height:26px;border-radius:50%;border:2px solid #fff;color:#fff;font:700 12px/22px system-ui,sans-serif;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.pin.star{background:#111;width:32px;height:32px;line-height:28px;font-size:16px}
+.leaflet-popup-content{font-size:13.5px;margin:10px 12px}
+.leaflet-popup-content b{font-size:14.5px}
+.pd{color:#666;font-size:12px}
+@media (max-width:760px){
+ .app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}
+ #map{height:62vh;order:-1}
+ .panel{border-right:0;border-top:1px solid var(--line);padding:14px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="panel">
+  <a class="back" href="./" target="_top">← Itinerary</a>
+  <h1 id="title">Map</h1>
+  <p class="sub">Every stop, coloured and numbered by day, on satellite. <b id="starNote" hidden>★ is where we're staying.</b> Tap a pin for the time and a Google Maps link.</p>
+  <nav class="chips" id="regionNav" aria-label="Choose a map"></nav>
+
+  <h2>Show days</h2>
+  <div class="chips" id="dayChips"></div>
+
+  <div id="stayBox" hidden>
+   <h2>Where we're staying</h2>
+   <p class="sub" style="margin:0 0 6px" id="stayLine"></p>
+   <ul class="list" id="stayAround"></ul>
+  </div>
+
+  <h2>Good to know</h2>
+  <ul class="list" id="notes"></ul>
+
+  <p class="note">Pins are placed by hand and accurate to roughly a block; use the Google Maps link in each pin for the exact door. The pins come straight from the itinerary, so they always match it.</p>
+ </aside>
+ <div id="map" role="application" aria-label="Satellite map of trip stops"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="trip-data.js"></script>
+<script>
+if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(()=>{});
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const COLOURS = ["#E5484D","#F76B15","#FFC53D","#30A46C","#00A2C7","#8E4EC6","#D6409F"];
+const want = new URLSearchParams(location.search).get("city");
+const region = REGIONS.find(r => r.id === want) || REGIONS[0];
+const inBox = (p, b) => p[0] >= b[0] && p[0] <= b[2] && p[1] >= b[1] && p[1] <= b[3];
+const fmt = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short", day:"numeric"});
+
+// Stops come from the itinerary: every stop whose map-search text has a pin inside this map's area.
+const stops = [];
+DAYS.forEach(d => d.stops.forEach(s => {
+  if (typeof s === "string" || !s[3]) return;
+  const p = PLACES[s[3]];
+  if (p && inBox(p, region.box)) stops.push({day:d.n, date:d.date, title:d.title, time:s[0], name:s[1], q:s[3], p});
+}));
+const dayNums = [...new Set(stops.map(s => s.day))];
+const colour = n => COLOURS[dayNums.indexOf(n) % COLOURS.length];
+
+document.title = region.name + " Map";
+document.getElementById("title").textContent = region.name + ": where everything is";
+document.getElementById("regionNav").innerHTML = REGIONS.map(r => `<a class="chip" href="map.html?city=${r.id}"${r.id === region.id ? ' aria-current="page"' : ""}>${esc(r.name)}</a>`).join("");
+document.getElementById("notes").innerHTML = region.notes.map(n => `<li>${esc(n)}</li>`).join("");
+
+const map = L.map("map", {zoomControl:true});
+const tile = (u, a) => L.tileLayer(u, {maxZoom:19, crossOrigin:true, attribution:a});
+const sat = tile("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", "Imagery © Esri, Maxar, Earthstar Geographics");
+const labels = tile("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", "Labels © Esri");
+const streets = tile("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "© OpenStreetMap contributors");
+sat.addTo(map); labels.addTo(map);
+L.control.layers({"Satellite":sat, "Street map":streets}, {"Place names":labels}, {collapsed:true}).addTo(map);
+
+const gm = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const layers = {};
+dayNums.forEach(n => layers[n] = L.layerGroup().addTo(map));
+stops.forEach(s => {
+  const icon = L.divIcon({className:"", html:`<div class="pin" style="background:${colour(s.day)}">${s.day}</div>`, iconSize:[26,26], iconAnchor:[13,13]});
+  L.marker(s.p, {icon, title:s.name}).bindPopup(`<b>${esc(s.name)}</b><br><span class="pd">Day ${s.day} · ${esc(fmt(s.date))} · ${esc(s.time)}</span><br><a href="${gm(s.q)}" target="_blank" rel="noopener">Open in Google Maps</a>`).addTo(layers[s.day]);
+});
+dayNums.forEach(n => {
+  const pts = stops.filter(s => s.day === n).map(s => s.p);
+  if (pts.length > 1) L.polyline(pts, {color:colour(n), weight:2.5, opacity:.8}).addTo(layers[n]);
+});
+
+const chips = document.getElementById("dayChips");
+dayNums.forEach(n => {
+  const d = DAYS.find(x => x.n === n), b = document.createElement("button");
+  b.className = "chip"; b.setAttribute("aria-pressed", "true");
+  b.innerHTML = `<i style="background:${colour(n)}"></i>Day ${n} <span>${esc(fmt(d.date))} · ${esc(d.title)}</span>`;
+  b.onclick = () => { const on = b.getAttribute("aria-pressed") === "true"; b.setAttribute("aria-pressed", on ? "false" : "true"); on ? map.removeLayer(layers[n]) : layers[n].addTo(map); };
+  chips.appendChild(b);
+});
+
+// The stay for this area, if there is one.
+const stay = STAYS.find(s => s.city === region.id);
+const pts = stops.map(s => s.p);
+if (stay) {
+  document.getElementById("stayBox").hidden = false;
+  document.getElementById("stayLine").innerHTML = `${stay.pin ? "★ " : ""}<b>${esc(stay.name)}</b>, ${esc(stay.dates)}.` + (stay.pin ? ` <a href="#" id="toBase">Show on map</a>` : "");
+  document.getElementById("stayAround").innerHTML = (stay.around || []).map(a => `<li>${esc(a)}</li>`).join("");
+  if (stay.pin) {
+    document.getElementById("starNote").hidden = false;
+    pts.push(stay.pin);
+    L.marker(stay.pin, {icon:L.divIcon({className:"", html:'<div class="pin star">★</div>', iconSize:[32,32], iconAnchor:[16,16]}), zIndexOffset:1000, title:"Where we're staying"})
+      .bindPopup(`<b>Our base: ${esc(stay.name)}</b><br><span class="pd">${esc(stay.dates)}. Pinned at the nearest station; the exact address is in the Airbnb app.</span>`).addTo(map);
+    document.getElementById("toBase").addEventListener("click", e => { e.preventDefault(); map.flyTo(stay.pin, 15); if (innerWidth <= 760) scrollTo({top:0, behavior:"smooth"}); });
+  }
+}
+if (pts.length) map.fitBounds(L.latLngBounds(pts).pad(0.08));
+else map.fitBounds([[region.box[0], region.box[1]], [region.box[2], region.box[3]]]);
+</script>
+</body>
+</html>

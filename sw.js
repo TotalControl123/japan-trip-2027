@@ -1,8 +1,7 @@
 // Offline support for the trip site. Bump VERSION when the list of files changes.
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL = "jp27-shell-" + VERSION, RUNTIME = "jp27-runtime", TILES = "jp27-tiles";
-const CORE = ["./", "index.html", "tokyo-map.html", "hakone-map.html", "kyoto-map.html", "osaka-map.html",
-  "manifest.webmanifest", "icon-192.png", "icon-512.png", "booking-reminders.ics",
+const CORE = ["./", "index.html", "trip-data.js", "map.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "booking-reminders.ics",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"];
 const TILE_HOSTS = ["server.arcgisonline.com", "tile.openstreetmap.org"];
